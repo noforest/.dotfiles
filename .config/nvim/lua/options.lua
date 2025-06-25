@@ -24,10 +24,15 @@ opt.smartindent = true  -- Indentation intelligente
 opt.scrolloff = 3
 
 
+-- options.lua
+vim.opt.encoding = "utf-8"
+vim.opt.fileencoding = "utf-8"
+vim.opt.fileencodings = { "utf-8", "latin1" } -- facultatif : permet la lecture de fichiers en latin1
+
 
 opt.wrap = false
--- opt.linebreak = true          -- couper proprement sans casser les mots
--- opt.breakindent = true        -- garder indentation pour lignes coupées
+opt.linebreak = true          -- couper proprement sans casser les mots
+opt.breakindent = true        -- garder indentation pour lignes coupées
 -- -- opt.showbreak = "↳"          -- symbole pour indiquer le début d'une ligne coupée
 --
 --

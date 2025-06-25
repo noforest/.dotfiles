@@ -11,11 +11,40 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 // static const char *fonts[]          = { "LiterationMonoNerdFont-Regular:size=9" };
 // static const char dmenufont[]       = {"LiterationMonoNerdFont-Regular:size=9"};
 
-static const char *fonts[]          = { "LiterationMono Nerd Font:size=9" };
-static const char dmenufont[]       = {"LiterationMono Nerd Font:size=9"};
+// static const char *fonts[]          = { "LiterationMono Nerd Font:size=9" };
+// static const char dmenufont[]       = {"LiterationMono Nerd Font:size=9"};
 
-// static char dmenufont[]             = "LiterationMono Nerd Font:size=9";
-// static const char *fonts[]          = { "LiterationMono Nerd Font:size=9", "Hack Nerd Font Mono:size=16", "NotoColorEmoji:pixelsize=14:antialias=true:autohint=true"  };
+static const char *fonts[] = {
+    "LiterationMono Nerd Font:size=9:antialias=true:autohint=true",
+    "Noto Color Emoji:size=9:antialias=true:autohint=true"
+};
+
+static const char dmenufont[] = "LiterationMono Nerd Font:size=9:antialias=true:autohint=true";
+
+
+// static const char *fonts[] = {
+//     "Hack Nerd Font:size=10:antialias=true:autohint=true",
+//     "Noto Color Emoji:size=10:antialias=true:autohint=true"
+// };
+//
+// static const char dmenufont[] = "Hack Nerd Font:size=10:antialias=true:autohint=true";
+
+
+// static const char *fonts[] = {
+//     "JetBrainsMono Nerd Font:size=10:antialias=true:autohint=true",
+//     "Noto Color Emoji:size=10:antialias=true:autohint=true"
+// };
+//
+// static const char dmenufont[] = "JetBrainsMono Nerd Font:size=10:antialias=true:autohint=true";
+
+
+// static const char *fonts[] = {
+//     "RobotoMono Nerd Font:size=10:antialias=true:autohint=true",
+//     "Noto Color Emoji:size=10:antialias=true:autohint=true"
+// };
+//
+// static const char dmenufont[] = "RobotoMono Nerd Font:size=10:antialias=true:autohint=true";
+
 
 
 static const char col_gray1[]       = "#222222";
@@ -68,7 +97,9 @@ static const Rule rules[] = {
     { "Xfce4-notifyd",  	NULL,       NULL,       0,       	    1,             	-1,        -1,22,-1,-1,      	 0 },
     { "Clipster",  	        NULL,       NULL,       0,       	    1,             	-1,        6000,22,500,-1,      	 0 },
     { "Matplotlib",  	    NULL,       NULL,       0,       	    1,             	-1,        -1,-1,-1,-1,      	 0 },
-    { "Thunar",  	        NULL,       "File Operation Progress",       0,       	    1,             	-1,        -1,-1,-1,-1,      	 0 },
+    { "Thunar",  	        NULL,       "File Operation Progress",0,1,             	-1,        -1,-1,-1,-1,      	 0 },
+    { "Thunar",             NULL,       "Rename",   0,              1,              -1,        -1,-1,-1,-1,         0 },
+
     // { "alacritty",         NULL,       NULL,       1 << 1,         0,              -1,        50,50,500,500,       0},
 };
 

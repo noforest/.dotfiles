@@ -978,51 +978,6 @@ require("lazy").setup({
 
   { "moll/vim-bbye" },
 
-  -- {"nvim-telescope/telescope-media-files.nvim"},
-
-  -- {
-  --     "3rd/image.nvim",
-  --     config = function()
-  --         require("image").setup({
-  --             backend = "ueberzug",
-  --             processor = "magick_rock", -- or "magick_cli"
-  --             integrations = {
-  --                 markdown = {
-  --                     enabled = true,
-  --                     clear_in_insert_mode = false,
-  --                     download_remote_images = true,
-  --                     only_render_image_at_cursor = false,
-  --                     floating_windows = false, -- if true, images will be rendered in floating markdown windows
-  --                     filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
-  --                 },
-  --                 neorg = {
-  --                     enabled = true,
-  --                     filetypes = { "norg" },
-  --                 },
-  --                 typst = {
-  --                     enabled = true,
-  --                     filetypes = { "typst" },
-  --                 },
-  --                 html = {
-  --                     enabled = false,
-  --                 },
-  --                 css = {
-  --                     enabled = false,
-  --                 },
-  --             },
-  --             max_width = nil,
-  --             max_height = nil,
-  --             max_width_window_percentage = nil,
-  --             max_height_window_percentage = 50,
-  --             window_overlap_clear_enabled = false, -- toggles images when windows are overlapped
-  --             window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif", "scrollview", "scrollview_sign" },
-  --             editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
-  --             tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
-  --             hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
-  --         })
-  --     end
-  -- },
-
   { "mbbill/undotree" },
 
   { "hrsh7th/cmp-path" },
@@ -1044,9 +999,9 @@ require("lazy").setup({
 --     "nvimdev/dashboard-nvim",
 --     lazy = false, -- As https://github.com/nvimdev/dashboard-nvim/pull/450, dashboard-nvim shouldn't be lazy-loaded to properly handle stdin.
 --     opts = function()
-     
+--
 --       local logo = [[
- 
+--
 --  ███▄    █ ▓█████  ▒█████   ██▒   █▓ ██▓ ███▄ ▄███▓
 --  ██ ▀█   █ ▓█   ▀ ▒██▒  ██▒▓██░   █▒▓██▒▓██▒▀█▀ ██▒
 -- ▓██  ▀█ ██▒▒███   ▒██░  ██▒ ▓██  █▒░▒██▒▓██    ▓██░
@@ -1069,7 +1024,7 @@ require("lazy").setup({
 --           statusline = true,
 --         },
 --         preview = {
---             command = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols all --size 55",  -- Commande pour convertir l'image en ASCII
+--             command = "chafa /home/for/Pictures/logo/samurai_logo_blue_bis.png --symbols all --size 55",  -- Commande pour convertir l'image en ASCII
 --             file_path = "/home/for/Pictures/samurai_logo_gray.png",  -- Chemin vers l'image
 --             file_height = 30,  -- Hauteur de l'aperçu
 --             file_width = 80,  -- Largeur de l'aperçu
@@ -1479,6 +1434,26 @@ require("lazy").setup({
   { "sindrets/diffview.nvim" },
 
   {
+      'arminveres/md-pdf.nvim',
+      branch = 'main', -- you can assume that main is somewhat stable until releases will be made
+      lazy = true,
+      keys = {
+          {
+              "ùll",
+              function() require("md-pdf").convert_md_to_pdf() end,
+              desc = "Markdown preview",
+          },
+      },
+      ---@type md-pdf.config
+      opts = {
+          -- Generate a table of contents, on by default
+          toc = false,
+          preview_cmd = function() return 'zathura' end,
+          margins = "1.3cm",
+      },
+  },
+
+  {
       -- You can also use the codeberg mirror if you want to use the plugin without relying on GitHub
       -- "https://codeberg.org/CodingThunder/zincoxide.git" -- for HTTPS
       -- "git@codeberg.org:CodingThunder/zincoxide.git"     -- for SSH
@@ -1528,6 +1503,7 @@ require("lazy").setup({
   {
       "folke/snacks.nvim",
       priority = 1000,
+      -- priority = 1000,
       lazy = false,
       opts = {
           -- your configuration comes here
@@ -1540,16 +1516,16 @@ require("lazy").setup({
           },
           quickfile = { enabled = true },
 
-          -- image = {
-          --     enabled = false,
-          --
-          --     formats = {
-          --     },
-          --
-          --     doc = {
-          --         enabled = false,
-          --     }
-          -- },
+          image = {
+              enabled = false,
+
+              formats = {
+              },
+
+              doc = {
+                  enabled = false,
+              }
+          },
           lazygit = {
               enabled = true,
               configure = true,
@@ -1637,7 +1613,7 @@ require("lazy").setup({
                                   ["[e"] = "explorer_error_prev",
 
                                   ["<Left>"] = "explorer_up",
-                                  ["<Right>"] = "explorer_focus",
+                                  ["<Right>"] = "confirm",
 
                                   ["<C-left>"] = {"explorer_up_and_cd", mode = {"i", "n"}},
                                   ["<C-right>"] = {"explorer_cd", mode = {"i", "n"}},
@@ -1852,79 +1828,18 @@ require("lazy").setup({
                  should_show_image() and {
                      {
                          section = "terminal",
-                         cmd = "chafa /home/for/Pictures/logo/samurai_logo_blue_bis.png --symbols all --size 50; sleep .1",
+                         cmd = "cat /home/for/.cache/nvim/chafa/samurai_logo_doom.txt",
+                         -- cmd = "cat /home/for/.cache/nvim/chafa/samurai_logo_all.txt",
+                         ------------------------------------------------------------------------------------------------------
+                         -- cmd = "chafa /home/for/Pictures/logo/samurai_logo_blue_bis.png --symbols all --size 50; sleep 10",
                          -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols sextant --size 50; sleep .1",
                          -- cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols all --size 55; sleep .1",
+                         ------------------------------------------------------------------------------------------------------
                          pane = 2,
                          -- indent = 4,
                          height = 35,
                      }
-                 }
-                 ,
-
-                 -- {
-                 --     section = "terminal",
-                 --     -- /!\/!\/!\/!\/!\samurai gray/!\/!\/!\/!\/!\
-                 --     -- cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols all --size 43; sleep .1",          -- CHOIX n°2
-                 --     -- cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols sextant --size 43; sleep .1",      -- CHOIX n°1
-                 --
-                 --
-                 --     cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols sextant --size 41; sleep .1",      -- CHOIX n°1
-                 --
-                 --     -- /!\/!\/!\/!\/!\samurai blue/!\/!\/!\/!\/!\
-                 --     -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols all --size 38; sleep .1",      -- CHOIX n°2
-                 --     -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols sextant --size 38; sleep .1",     -- CHOIX n°1
-                 --     pane = 2,
-                 --     indent = 6,
-                 --     height = 25,
-                 -- },
-                 -- {pane = 2, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1,},
-
-                 -- should_show_image() and (in_git_repo() and {
-                 --     {
-                 --         section = "terminal",
-                 --         -- /!\/!\/!\/!\/!\samurai gray/!\/!\/!\/!\/!\
-                 --         -- cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols all --size 43; sleep .1",          -- CHOIX n°2
-                 --         cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols sextant --size 43; sleep .1",      -- CHOIX n°1
-                 --
-                 --         -- /!\/!\/!\/!\/!\samurai blue/!\/!\/!\/!\/!\
-                 --         -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols all --size 38; sleep .1",      -- CHOIX n°2
-                 --         -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols sextant --size 38; sleep .1",     -- CHOIX n°1
-                 --         pane = 2,
-                 --         indent = 4,
-                 --         height = 25,
-                 --     },
-                 --     {pane = 2,
-                 --      icon = " ",
-                 --      title = "Git Status",
-                 --      section = "terminal",
-                 --      enabled = function()
-                 --              return Snacks.git.get_root() ~= nil
-                 --      end,
-                 --      cmd = "git status --short --branch --renames; git --no-pager diff --stat -B -M -C",
-                 --      height = 7,
-                 --      padding = 1,
-                 --      indent = 2,
-                 --     }
-                 --
-                 -- } or {
-                 --
-                 --     {
-                 --         section = "terminal",
-                 --         -- /!\/!\/!\/!\/!\samurai gray/!\/!\/!\/!\/!\
-                 --         -- cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols all --size 43; sleep .1",          -- CHOIX n°2
-                 --         cmd = "chafa /home/for/Pictures/samurai_logo_gray.png --symbols sextant --size 43; sleep .1",      -- CHOIX n°1
-                 --
-                 --         -- /!\/!\/!\/!\/!\samurai blue/!\/!\/!\/!\/!\
-                 --         -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols all --size 38; sleep .1",      -- CHOIX n°2
-                 --         -- cmd = "chafa /home/for/Pictures/samurai_logo_blue_bis.png --symbols sextant --size 38; sleep .1",     -- CHOIX n°1
-                 --         pane = 2,
-                 --         indent = 6,
-                 --         height = 25,
-                 --     },
-                 --     {pane = 2, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1,},
-                 -- }) or nil,
-
+                 },
              },
           },
       },
@@ -2352,6 +2267,7 @@ require("lazy").setup({
 
     {
       "saghen/blink.cmp",
+      -- build = 'cargo build --release',
       enabled = true,      --------------------------------------------------------------------------------------------------------------------------------
       dependencies = {
         "moyiz/blink-emoji.nvim",
@@ -2462,7 +2378,8 @@ require("lazy").setup({
                 -- Which directions to show the window,
                 -- falling back to the next direction when there's not enough space,
                 -- or another window is in the way
-                direction_priority = { 's', 'e' },
+                -- direction_priority = { 's', 'e' },
+                direction_priority = { 's' },
                 -- Disable if you run into performance issues
                 treesitter_highlighting = true,
                 show_documentation = false,
