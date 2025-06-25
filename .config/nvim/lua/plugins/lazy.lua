@@ -1828,7 +1828,7 @@ require("lazy").setup({
                  should_show_image() and {
                      {
                          section = "terminal",
-                         cmd = "cat /home/for/.cache/nvim/chafa/samurai_logo_doom.txt",
+                         cmd = "cat /home/for/.cache/nvim/chafa/samurai_logo_doom.txt; sleep .1",
                          -- cmd = "cat /home/for/.cache/nvim/chafa/samurai_logo_all.txt",
                          ------------------------------------------------------------------------------------------------------
                          -- cmd = "chafa /home/for/Pictures/logo/samurai_logo_blue_bis.png --symbols all --size 50; sleep 10",
