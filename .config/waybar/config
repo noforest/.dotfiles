@@ -16,7 +16,6 @@
                 "default": "",
                 "empty": "" // persistent (created by this plugin)
             },
-            "all-outputs": false // recommended
         },
         "custom/notification": {
             "tooltip": false,
@@ -82,9 +81,9 @@
         "custom/pacman": {
             "format": "󰅢 {}",
             "interval": 30,   
-            "exec": "yay -Qu | wc -l",
+            "exec": "checkupdates | wc -l",
             "exec-if": "exit 0",
-            "on-click": "alacritty -e sh -c 'yay -Syu; echo Done - Press enter to exit; read'; pkill -SIGRTMIN+8 waybar",
+            "on-click": "alacritty -e sh -c 'sudo pacman -Syu; echo Done - Press enter to exit; read'; pkill -SIGRTMIN+8 waybar",
             "signal": 8,
             "tooltip": false,
         },
