@@ -15,8 +15,20 @@ export MOZ_GTK_TITLEBAR_DECORATION=none
 setxkbmap -option caps:escape &
 xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Scrolling Pixel Distance" 30 &
 xinput --set-prop "pointer:Logitech K400 Plus" "libinput Natural Scrolling Enabled" 1 &
-libinput-gestures-setup start &
+libinput-gestures-setup restart &
 dwmblocks & 
 # xset dpms 600 &
 xss-lock -- slock &
-exec dwm 2>/dev/null
+exec dwm 2> ~/.dwm.log
+
+
+
+# export WALLPAPER="/home/for/Pictures/Wallpapers/banshee_of_inisherin.png"
+# feh --bg-fill "$WALLPAPER" &
+# ~/.xprofile_autostart.sh
+#
+# xss-lock -- ~/.local/bin/scripts/lock_and_refresh.sh &
+# # xss-lock -- slock &
+#
+# dwmblocks & 
+# exec dwm 2> ~/.dwm.log

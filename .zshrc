@@ -162,9 +162,15 @@ export STARSHIP_CONFIG=~/.config/starship/customstarship.toml
 
 ZSH_AUTOSUGGEST_MANUAL_REBIND=0
 
-precmd() {
-  echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
-}
+# precmd() {
+#   echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
+# }
+
+if ps -p $(ps -o ppid= -p $$) | grep -q alacritty; then
+    precmd() {
+        echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
+    }
+fi
 
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
