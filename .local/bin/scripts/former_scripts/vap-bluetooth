@@ -1,0 +1,21 @@
+#!/bin/sh
+
+case $BUTTON in
+	1) blueman-manager;;
+esac
+
+bluetooth_info=$(bluetoothctl show | grep "Powered" | awk '{print $2}')
+connected_info=$(bluetoothctl paired-devices | grep "Connected: yes")
+
+if [ "$bluetooth_info" == "no" ]; then
+	icon="󰂲"
+else
+	# Vérifier si la sortie n'est pas vide
+	if [ -n "$connected_info" ]; then
+		icon="󰂱"
+	else
+		icon="󰂯"
+	fi
+fi
+
+echo " $icon"

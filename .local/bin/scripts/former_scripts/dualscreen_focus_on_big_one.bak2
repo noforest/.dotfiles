@@ -1,0 +1,44 @@
+#!/bin/sh
+exec > /dev/null 2>&1
+
+HDMI="HDMI-A-0"
+LAPTOP="eDP"
+
+STATE_FILE="/tmp/display_state"
+
+# Vérifie si HDMI est connecté
+is_hdmi_connected() {
+    xrandr | grep "^$HDMI connected" >/dev/null
+}
+
+# Etat à écrire: uniquement l'écran actif
+get_active_output() {
+    if is_hdmi_connected; then
+        echo "${HDMI}|"
+    else
+        echo "${LAPTOP}|"
+    fi
+}
+
+# Lit l'état précédent
+prev_state=""
+if [ -f "$STATE_FILE" ]; then
+    prev_state=$(cat "$STATE_FILE")
+fi
+
+# Récupère l'écran actif actuel
+current_state=$(get_active_output)
+
+# Agit seulement si l'état a changé
+if [ "$current_state" != "$prev_state" ]; then
+    echo "$current_state" > "$STATE_FILE"
+
+    if is_hdmi_connected; then
+        xrandr --output "$HDMI" --auto --primary --output "$LAPTOP" --off
+        feh --bg-fill "$WALLPAPER" > /dev/null 2>&1
+    else
+        xrandr --output "$LAPTOP" --auto --primary --output "$HDMI" --off
+        feh --bg-fill "$WALLPAPER" > /dev/null 2>&1
+    fi
+fi
+

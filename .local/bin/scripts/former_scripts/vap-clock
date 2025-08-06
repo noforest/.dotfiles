@@ -1,0 +1,9 @@
+#!/bin/sh
+
+case $BUTTON in
+1) notify-send "This Month" "$(cal | sed "s/\b$(date +'%e' | sed "s/\ //g")\b/<b><span color='red'>&<\/span><\/b>/")" ;
+esac
+
+clock2=$(date "+%a, %H:%M")
+
+echo "$clock2"

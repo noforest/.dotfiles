@@ -1,0 +1,10 @@
+#!/bin/sh
+
+case $BUTTON in
+1) clipster -s -c;;
+esac
+
+# icon="󰅌 "
+icon="󱉨  "
+
+echo " $icon"

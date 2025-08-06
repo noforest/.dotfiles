@@ -1,0 +1,1 @@
+/usr/local/bin/custom_dir_open_alacritty.sh

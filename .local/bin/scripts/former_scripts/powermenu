@@ -1,0 +1,18 @@
+#!/bin/bash
+
+
+case $BUTTON in
+	1) CHOICE=$(echo -e "Shutdown\nReboot\nSuspend\nLogout" | dmenu -i -p "Select an action:");;
+esac
+
+icon=" "
+
+case "$CHOICE" in
+    Shutdown) poweroff ;;
+    Reboot) reboot ;;
+    Suspend) systemctl suspend ;;
+    Logout) pkill dwm ;;
+    *) ;;
+esac
+
+echo "$icon"

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Check if a file is provided
+if [ -z "$1" ]; then
+  echo "Usage: pdf <filename>"
+  exit 1
+fi
+
+# Open the file with Okular and disown the process to detach it from the terminal
+nohup okular "$1" >/dev/null 2>&1 &
