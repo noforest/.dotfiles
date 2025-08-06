@@ -115,11 +115,17 @@ vim.api.nvim_create_autocmd({ "UIEnter", "ColorScheme" }, {
   end,
 })
 
+-- vim.api.nvim_create_autocmd("VimLeave", {
+--   callback = function()
+--     -- Change explicitement la couleur de fond au moment de quitter
+--     io.write("\027]11;#101010\027\\")  -- Remplace #000000 par la couleur par défaut de ton terminal `st`
+--   end,
+-- })
 vim.api.nvim_create_autocmd("VimLeave", {
-  callback = function()
-    -- Change explicitement la couleur de fond au moment de quitter
-    io.write("\027]11;#101010\027\\")  -- Remplace #000000 par la couleur par défaut de ton terminal `st`
-  end,
+    callback = function()
+        -- Réinitialise la couleur de fond à la valeur par défaut du terminal
+        io.write("\027]111\027\\")  -- Séquence pour réinitialiser la couleur de fond
+    end,
 })
 
 
@@ -152,3 +158,13 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 -- end
 
 
+-- Keep terminal colors consistent after quitting Vim in tmux
+
+vim.cmd([[
+if exists('$TMUX')
+    " Tell Vim to use 256 colors and prevent background reset on exit
+    set t_ti= t_te=
+    set t_8f=\\<Esc>[38;2;%lu;%lu;%lum
+    set t_8b=\\<Esc>[48;2;%lu;%lu;%lum
+    endif
+    ]])

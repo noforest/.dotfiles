@@ -201,9 +201,9 @@ export COLORTERM=truecolor
 # sert pour tmux pour pas rentrer en mode normal notamment
 set -o emacs
 
-if [ -n "$PS1" ] && [ -z "$TMUX" ]; then
-    tmux new-session -A -s main
-fi
+# if [ -n "$PS1" ] && [ -z "$TMUX" ]; then
+#     tmux new-session -A -s main
+# fi
 
 
 #################################################################

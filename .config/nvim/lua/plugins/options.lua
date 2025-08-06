@@ -1,11 +1,11 @@
--- METTRE LE FOND du colorscheme DE la meme couleur que mon terminal!!!!!!!!!!!!!!!
--- require("catppuccin").setup({
---   custom_highlights = function(colors)
---     return {
---       Normal = { bg = "none" },
---     }
---   end
--- })
+-- -- METTRE LE FOND du colorscheme DE la meme couleur que mon terminal!!!!!!!!!!!!!!!
+require("catppuccin").setup({
+  custom_highlights = function(colors)
+    return {
+      -- Normal = { bg = "none" },
+    }
+  end
+})
 
 require("catppuccin").setup({
     integrations = {
@@ -24,7 +24,7 @@ vim.cmd("colorscheme catppuccin-mocha") -- set color theme
 -- vim.cmd("colorscheme no-clown-fiesta") -- set color theme
 
 -- vim.cmd("highlight SignColumn guibg=NONE")
-vim.o.background = "dark" -- or "light" for light mode
+-- vim.o.background = "dark" -- or "light" for light mode
 
 -- Load and setup function to choose plugin and language highlights
 vim.g.startify_custom_header = "" -- startify remove random quote
