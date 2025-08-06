@@ -10,7 +10,8 @@ static const Block blocks[] = {
     {"",		"vap-clock",		5,			1},
     {"",		"powermenu",		0,			13},
     // {"",		"dualscreen_focus_on_big_one",		5,			0},
-    {"",		"multiscreen.sh",		5,			0},
+    // {"",		"multiscreen.sh",		5,			0},
+    {"",		"multiscreen",		5,			0},
 };
 
 //sets delimiter between status commands. NULL character ('\0') means no delimiter.

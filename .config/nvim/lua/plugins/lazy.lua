@@ -710,20 +710,41 @@ require("lazy").setup({
   },
 
 
+  -- {
+  --     'arminveres/md-pdf.nvim',
+  --     branch = 'main', -- you can assume that main is somewhat stable until releases will be made
+  --     lazy = true,
+  --     keys = {
+  --         {
+  --             "ùll",
+  --             function() require("md-pdf").convert_md_to_pdf() end,
+  --             desc = "Markdown preview",
+  --         },
+  --     },
+  --     ---@type md-pdf.config
+  --     opts = {
+  --         -- Generate a table of contents, on by default
+  --         toc = false,
+  --         preview_cmd = function() return 'zathura' end,
+  --         margins = "1.3cm",
+  --     },
+  -- },
+
   {
       'arminveres/md-pdf.nvim',
-      branch = 'main', -- you can assume that main is somewhat stable until releases will be made
+      branch = 'main',
       lazy = true,
-      keys = {
-          {
-              "ùll",
-              function() require("md-pdf").convert_md_to_pdf() end,
-              desc = "Markdown preview",
-          },
-      },
-      ---@type md-pdf.config
+      init = function()
+          vim.api.nvim_create_autocmd("FileType", {
+              pattern = "markdown",
+              callback = function()
+                  vim.keymap.set("n", "ùll", function()
+                      require("md-pdf").convert_md_to_pdf()
+                  end, { desc = "Markdown preview", buffer = true })
+              end,
+          })
+      end,
       opts = {
-          -- Generate a table of contents, on by default
           toc = false,
           preview_cmd = function() return 'zathura' end,
           margins = "1.3cm",
@@ -764,6 +785,20 @@ require("lazy").setup({
       vim.g.maplocalleader = "ù"
       vim.g.vimtex_quickfix_mode = 0 -- enlève la fenêtre de warning à chaque fois que je compile.
     end
+  },
+  {
+      "folke/flash.nvim",
+      event = "VeryLazy",
+      ---@type Flash.Config
+      opts = {},
+      -- stylua: ignore
+      keys = {
+          -- { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+          -- { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+          -- { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+          -- { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+          { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+      },
   },
 
 

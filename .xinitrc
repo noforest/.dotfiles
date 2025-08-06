@@ -1,5 +1,6 @@
 #!/bin/sh
-picom &
+
+picom -b &
 dunst &
 # feh --bg-fill ~/Pictures/from_twitter/IMG_7741.JPG &
 # feh --bg-fill Pictures/Wallpapers/a_ski_lift_with_a_chair_in_the_air.jpg &
@@ -9,7 +10,7 @@ export WALLPAPER="/home/for/Pictures/Wallpapers/banshee_of_inisherin.png"
 feh --bg-fill "$WALLPAPER" &
 
 xset r rate 250 50 &
-# xmodmap ~/.Xmodmap &
+
 clipster -d -f ~/.config/clipster/clipster.ini &
 export MOZ_GTK_TITLEBAR_DECORATION=none
 setxkbmap -option caps:escape &
@@ -17,13 +18,14 @@ xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Scrolling Pixel Dis
 xinput --set-prop "pointer:Logitech K400 Plus" "libinput Natural Scrolling Enabled" 1 &
 libinput-gestures-setup restart &
 dwmblocks & 
-# xset dpms 600 &
+# xset dpms 10 &
 xss-lock -- slock &
 exec dwm 2> ~/.dwm.log
 
 
 
 # export WALLPAPER="/home/for/Pictures/Wallpapers/banshee_of_inisherin.png"
+# export MOZ_GTK_TITLEBAR_DECORATION=none
 # feh --bg-fill "$WALLPAPER" &
 # ~/.xprofile_autostart.sh
 #

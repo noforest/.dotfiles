@@ -19,6 +19,7 @@ export EDITOR=nvim
 export LC_ALL=en_US.UTF-8
 export LC_TIME=en_US.UTF-8
 
+
 # Pour colorer eza, tree, etc... (parfait pour la couleur violet)
 export LS_COLORS="$(vivid generate dracula)"
 
@@ -84,6 +85,19 @@ bindkey "^[[1;3C" forward-word     # Alt + flèche droite
 bindkey "^[[1;5D" backward-word    # Ctrl + flèche gauche
 bindkey "^[[1;5C" forward-word     # Ctrl + flèche droite
 
+
+# Function to fuzzy-find directories only
+ffind_dir() {
+    local dir
+    dir=$(find . -type d -not -path '*/\.*' 2> /dev/null | fzf --height 40% --reverse --prompt="Directories> ")
+    if [[ -n "$dir" ]]; then
+        cd "$dir"
+    fi
+}
+
+# Bind Ctrl+F to ffind_dir function
+bindkey -s '^F' 'ffind_dir\n'
+
 # Fonction pour vérifier si la commande commence par "ssh"
 function sshc() {
   # Lancer ssh-agent si ce n'est pas déjà fait
@@ -95,9 +109,6 @@ function sshc() {
   command ssh "$@"
 }
 
-f() { echo "$(find . -type f -not -path '*/go*' | fzf)" | xclip -selection clipboard }
-fcd() { cd "$(find . -type d -not -path '*/go*' | fzf)" && l; }
-fv() { nvim "$(find . -type f -not -path '*/go*' | fzf)" }
 git() {
   if [[ "$1" == "log" || "$1" == "glog" ]]; then
     shift
@@ -180,3 +191,19 @@ function y() {
     fi
     rm -f -- "$tmp"
 }
+
+#################################################################
+# config pour tmux
+
+export TERM="tmux-256color"
+export COLORTERM=truecolor
+
+# sert pour tmux pour pas rentrer en mode normal notamment
+set -o emacs
+
+if [ -n "$PS1" ] && [ -z "$TMUX" ]; then
+    tmux new-session -A -s main
+fi
+
+
+#################################################################
