@@ -1,1 +1,13 @@
-/usr/local/bin/clipboard_history
+#!/bin/sh
+
+case $BUTTON in
+1) clipster -s -c;;
+esac
+
+# icon="󰅌 "
+# icon="󱉨   "
+
+icon="󱉨    "
+
+
+echo " $icon"

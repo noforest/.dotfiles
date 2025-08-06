@@ -1,1 +1,7 @@
-/usr/local/bin/on_ducky_plugged.sh
+#!/bin/bash
+
+export DISPLAY=:0
+export XAUTHORITY=/home/for/.Xauthority
+su for -c 'source /home/for/.xinitrc'
+
+
