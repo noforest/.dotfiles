@@ -1,5 +1,6 @@
 #!/bin/sh
 
+exec >/home/for/.xinitrc.log 2>&1
 picom -b &
 dunst &
 # feh --bg-fill ~/Pictures/from_twitter/IMG_7741.JPG &
@@ -13,24 +14,23 @@ xset r rate 250 50 &
 
 clipster -d -f ~/.config/clipster/clipster.ini &
 export MOZ_GTK_TITLEBAR_DECORATION=none
-setxkbmap -option caps:escape &
+
+### keyboard fr personalisé (que certaines touches XF86)
+### xkbcomp -I$HOME/.xkb $HOME/.xkb/base.xkb $DISPLAY
+
+####### ANCIEN #######
+# ~~~~~~~~~~ DANS /etc/X11/xorg.conf.d/00-keyboard.conf ~~~~~~~~~~~
+# setxkbmap -option caps:escape &
+# setxkbmap -layout fr -option caps:escape &
+######################
+
 xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Scrolling Pixel Distance" 30 &
 xinput --set-prop "pointer:Logitech K400 Plus" "libinput Natural Scrolling Enabled" 1 &
 libinput-gestures-setup restart &
 dwmblocks & 
-# xset dpms 10 &
+# xset dpms 600 0 0 &
 xss-lock -- slock &
-exec dwm 2> ~/.dwm.log
-
-
-
-# export WALLPAPER="/home/for/Pictures/Wallpapers/banshee_of_inisherin.png"
-# export MOZ_GTK_TITLEBAR_DECORATION=none
-# feh --bg-fill "$WALLPAPER" &
-# ~/.xprofile_autostart.sh
-#
-# xss-lock -- ~/.local/bin/scripts/lock_and_refresh.sh &
-# # xss-lock -- slock &
-#
-# dwmblocks & 
+# xautolock -time 12 -locker "systemctl suspend" -detectsleep &
+exec dwm
 # exec dwm 2> ~/.dwm.log
+# exec dwm >/dev/null 2>&1
