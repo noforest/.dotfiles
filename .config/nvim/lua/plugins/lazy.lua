@@ -838,96 +838,96 @@ require("lazy").setup({
 
   },
 
-  {
-      "zbirenbaum/copilot.lua",
-      cmd = "Copilot",
-      event = "InsertEnter",
-      config = function()
-          require("copilot").setup({
-              panel = {
-                  enabled = true,
-                  auto_refresh = false,
-                  keymap = {
-                      jump_prev = "[[",
-                      jump_next = "]]",
-                      accept = "<CR>",
-                      refresh = "gr",
-                      open = "<M-CR>",
-                  },
-                  layout = {
-                      position = "bottom", -- | top | left | right | horizontal | vertical
-                      ratio = 0.4,
-                  },
-              },
-              suggestion = {
-                  enabled = true,
-                  auto_trigger = false,
-                  hide_during_completion = true,
-                  debounce = 75,
-                  keymap = {
-                      accept = "<C-l>",
-                      accept_word = false,
-                      accept_line = false,
-                      next = "<M-]>",
-                      prev = "<M-[>",
-                      dismiss = "<C-]>",
-                  },
-              },
-              filetypes = {
-                  yaml = false,
-                  markdown = false,
-                  help = false,
-                  gitcommit = false,
-                  gitrebase = false,
-                  hgcommit = false,
-                  svn = false,
-                  cvs = false,
-                  ["."] = false,
-              },
-              copilot_node_command = "node", -- Node.js version must be > 18.x
-              server_opts_overrides = {},
-          })
-      end,
-  },
+  -- {
+  --     "zbirenbaum/copilot.lua",
+  --     cmd = "Copilot",
+  --     event = "InsertEnter",
+  --     config = function()
+  --         require("copilot").setup({
+  --             panel = {
+  --                 enabled = true,
+  --                 auto_refresh = false,
+  --                 keymap = {
+  --                     jump_prev = "[[",
+  --                     jump_next = "]]",
+  --                     accept = "<CR>",
+  --                     refresh = "gr",
+  --                     open = "<M-CR>",
+  --                 },
+  --                 layout = {
+  --                     position = "bottom", -- | top | left | right | horizontal | vertical
+  --                     ratio = 0.4,
+  --                 },
+  --             },
+  --             suggestion = {
+  --                 enabled = true,
+  --                 auto_trigger = false,
+  --                 hide_during_completion = true,
+  --                 debounce = 75,
+  --                 keymap = {
+  --                     accept = "<C-l>",
+  --                     accept_word = false,
+  --                     accept_line = false,
+  --                     next = "<M-]>",
+  --                     prev = "<M-[>",
+  --                     dismiss = "<C-]>",
+  --                 },
+  --             },
+  --             filetypes = {
+  --                 yaml = false,
+  --                 markdown = false,
+  --                 help = false,
+  --                 gitcommit = false,
+  --                 gitrebase = false,
+  --                 hgcommit = false,
+  --                 svn = false,
+  --                 cvs = false,
+  --                 ["."] = false,
+  --             },
+  --             copilot_node_command = "node", -- Node.js version must be > 18.x
+  --             server_opts_overrides = {},
+  --         })
+  --     end,
+  -- },
 
 
 
-  {
-      "yetone/avante.nvim",
-      event = "VeryLazy",
-      lazy = false,
-      version = false, -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
-      opts = {
-          -- add any opts here
-          provider = "copilot",
-          hints = { enabled = false },
-          -- copilot = {
-          -- }
-
-      },
-      -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-      build = "make",
-      dependencies = {
-          "stevearc/dressing.nvim",
-          "nvim-lua/plenary.nvim",
-          "MunifTanjim/nui.nvim",
-          --- The below dependencies are optional,
-          "echasnovski/mini.pick", -- for file_selector provider mini.pick
-          "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-          "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-          "ibhagwan/fzf-lua", -- for file_selector provider fzf
-          "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-          "zbirenbaum/copilot.lua", -- for providers='copilot'
-          {
-              -- Make sure to set this up properly if you have lazy=true
-              'MeanderingProgrammer/render-markdown.nvim',
-              opts = {
-                  file_types = { "markdown", "Avante" },
-              },
-              ft = { "markdown", "Avante" },
-          },
-      },
-  },
+  -- {
+  --     "yetone/avante.nvim",
+  --     event = "VeryLazy",
+  --     lazy = false,
+  --     version = false, -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
+  --     opts = {
+  --         -- add any opts here
+  --         provider = "copilot",
+  --         hints = { enabled = false },
+  --         -- copilot = {
+  --         -- }
+  --
+  --     },
+  --     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  --     build = "make",
+  --     dependencies = {
+  --         "stevearc/dressing.nvim",
+  --         "nvim-lua/plenary.nvim",
+  --         "MunifTanjim/nui.nvim",
+  --         --- The below dependencies are optional,
+  --         "echasnovski/mini.pick", -- for file_selector provider mini.pick
+  --         "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+  --         "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+  --         "ibhagwan/fzf-lua", -- for file_selector provider fzf
+  --         "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+  --         "zbirenbaum/copilot.lua", -- for providers='copilot'
+  --         {
+  --             -- Make sure to set this up properly if you have lazy=true
+  --             'MeanderingProgrammer/render-markdown.nvim',
+  --             opts = {
+  --                 file_types = { "markdown", "Avante" },
+  --             },
+  --             ft = { "markdown", "Avante" },
+  --         },
+  --     },
+  -- },
 
   {
     'nvim-lualine/lualine.nvim',
@@ -2308,6 +2308,8 @@ require("lazy").setup({
       enabled = true,      --------------------------------------------------------------------------------------------------------------------------------
       dependencies = {
         "moyiz/blink-emoji.nvim",
+
+        "hrsh7th/nvim-cmp",
 
         {
             "windwp/nvim-autopairs",

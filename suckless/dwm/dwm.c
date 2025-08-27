@@ -1580,11 +1580,9 @@ quit(const Arg *arg)
 
 void
 quit_properly(const Arg *arg) {
-    // Exécuter la commande avant de quitter
     system("pkill dwmblocks");
     system("rm -rf /run/user/$(id -u)/state_dualscreen_focus_on_big_one/*");
     system("rm -rf /run/user/$(id -u)/state_multiscreen/*");
-    // Quitter DWM
     quit(arg);
 }
 

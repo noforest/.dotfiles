@@ -1,0 +1,138 @@
+pour update pacman : sudo pacman -Syu
+pour update yay: yay
+
+
+installer DWM (sans installer des patches) : https://www.youtube.com/watch?v=6MaTMuFVGck&t
+pour installer les patches d'abord avoir mis un dossier patches dans les dossiers dwm, st, dmenu
+puis suivre mon tuto dans les notes ou sur ma feuille A4
+	attention j'ai modif un patch (voir verso de cette feuille A4)
+
+modifier le nombre de lignes pour l'historique du terminal : aller dans /suckess/st/st.h puis modifier HISTSIZE
+
+la transparence c'est avec picom (config dans .config/picom/picom.conf 
+
+les scripts accompagnat dwmblocks sont dans ~/.local/bin/scripts TOUS EN CHMOD +X
+
+trÃs important:
+	pour Ãviter bug d'affichage quand je log out (mod+shift+q)
+	j'ai mis une fonction dans dwm.c : quit_properly
+	donc a la place du "quit" pour mod+shit+q, j'ai mis quit_properly
+
+font literationMonoNerdFont-Regular
+size 9 et 9 pour demenu et en gÃ©nÃ©ral dans le config.h de dwm
+size 15 pour st
+regler les dpi a 100 (dans .Xresources)
+
+
+
+pour les fonts :
+sudo pacman -S fontconfig
+fc-cache -fv
+~/.config/fontconfig/fonts.conf --> 
+
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <match target="font">
+    <edit name="antialias" mode="assign">
+      <bool>true</bool>
+    </edit>
+    <edit name="hinting" mode="assign">
+      <bool>true</bool>
+    </edit>
+    <edit name="hintstyle" mode="assign">
+      <const>hintslight</const>
+    </edit>
+    <edit name="lcdfilter" mode="assign">
+      <const>lcddefault</const>
+    </edit>
+    <edit name="rgba" mode="assign">
+      <const>rgb</const>
+    </edit>
+  </match>
+</fontconfig>
+
+
+fc-cache -fv
+
+sudo pacman -S ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-mono noto-fonts noto-fonts-emoji
++ télécharger roboto et d'autrs nerd fonts
+
+modif /etc/ly/config.ini
+> x_cmd = /usr/bin/X >/home/for/.xorg_ly.log 2>&1
+> x_cmd = /usr/bin/X 2>&1 | ( [ -f /home/for/.xorg_ly.log ] && [ $(stat -c%s /home/for/.xorg_ly.log) -ge 5242880 ] && : > /home/for/.xorg_ly.log ; tee -a /home/for/.xorg_ly.log )
+
+
+Pour enlever l'erreur: quand je quittais dwm (extrait du message ci-dessous)
+X.Org X Server 1.21.1.18
+X Protocol Version 11, Revision 0
+Current Operating System: Linux archlinux 6.16.3-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 Aug 2025 15:32:49 +0000 x86_64
+Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=2bd7d5c1-4226-4499-b88b-4f551f4afe19 rw loglevel=3 quiet
+
+Current version of pixman: 0.46.4
+	Before reporting problems, check http://wiki.x.org
+	to make sure that you have the latest version.
+Markers: (--) probed, (**) from config file, (==) default setting,
+	(++) from command line, (!!) notice, (II) informational,
+	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
+(==) Log file: "/home/for/.local/share/xorg/Xorg.0.log", Time: Wed Aug 27 22:26:00 2025
+(==) Using config file: "/etc/X11/xorg.conf"
+(==) Using config directory: "/etc/X11/xorg.conf.d"
+(==) Using system config directory "/usr/share/X11/xorg.conf.d"
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Warning:          Could not resolve keysym XF86RefreshRateToggle
+> Warning:          Could not resolve keysym XF86Accessibility
+> Warning:          Could not resolve keysym XF86DoNotDisturb
+Errors from xkbcomp are not fatal to the X server
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Warning:          Could not resolve keysym XF86RefreshRateToggle
+> Warning:          Could not resolve keysym XF86Accessibility
+> Warning:          Could not resolve keysym XF86DoNotDisturb
+Errors from xkbcomp are not fatal to the X server
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Warning:          Could not resolve keysym XF86RefreshRateToggle
+> Warning:          Could not resolve keysym XF86Accessibility
+> Warning:          Could not resolve keysym XF86DoNotDisturb
+Errors from xkbcomp are not fatal to the X server
+(II) Server terminated successfully (0). Closing log file.
+
+
+
+
+il fallait commenter les lignes associées aux différentes touches XF86.. dans le 
+fichier:
+/usr/share/X11/xkb/symbols/inet
+
+
+voici ce qu'il y a dans le dossier /etc/X11/xorg.conf.d:
+> cat 00-keyboard.conf
+# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+# probably wise not to edit this file manually. Use localectl(1) to
+# update this file.
+
+# DEFAULT (sans mon fichier custom fr_min (que les XF86 que j'ai besoin))
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "fr"
+        Option "XkbOptions" "caps:escape"
+EndSection
+
+> cat 01-touchpad.conf
+Section "InputClass"
+    Identifier "Touchpad principal"
+    MatchProduct "ELAN2204:00 04F3:3109 Touchpad"
+    MatchIsTouchpad "on"
+    Option "Tapping" "on"
+    Option "DisableWhileTyping" "on"
+    Option "NaturalScrolling" "on"
+    Option "ScrollingPixelDistance" "30"
+EndSection
+
+> cat 90-libinput.conf
+Section "InputClass"
+	Identifier "HP 280M HP 280 Silent Wireless Mouse"
+	MatchDriver "libinput"
+	MatchIsPointer "on"
+	Option "AccelSpeed" "-0.5"
+EndSection

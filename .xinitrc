@@ -28,9 +28,9 @@ xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Scrolling Pixel Dis
 xinput --set-prop "pointer:Logitech K400 Plus" "libinput Natural Scrolling Enabled" 1 &
 libinput-gestures-setup restart &
 dwmblocks & 
-# xset dpms 600 0 0 &
+xset dpms 1800 0 0 &       #standby/suspend/off
 xss-lock -- slock &
-# xautolock -time 12 -locker "systemctl suspend" -detectsleep &
+
+xautolock -time 35 -locker "systemctl suspend" -detectsleep &
+
 exec dwm
-# exec dwm 2> ~/.dwm.log
-# exec dwm >/dev/null 2>&1
