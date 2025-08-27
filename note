@@ -59,8 +59,13 @@ sudo pacman -S ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-mono noto-fonts not
 + télécharger roboto et d'autrs nerd fonts
 
 modif /etc/ly/config.ini
+> x_cmd = /usr/bin/X
 > x_cmd = /usr/bin/X >/home/for/.xorg_ly.log 2>&1
-> x_cmd = /usr/bin/X 2>&1 | ( [ -f /home/for/.xorg_ly.log ] && [ $(stat -c%s /home/for/.xorg_ly.log) -ge 5242880 ] && : > /home/for/.xorg_ly.log ; tee -a /home/for/.xorg_ly.log )
+> clock = %c
+
+
+voir les log de xorg sinon: /home/for/.local/share/xorg/Xorg.0.log 
+(faire un lien symbolique sinon)
 
 
 Pour enlever l'erreur: quand je quittais dwm (extrait du message ci-dessous)
