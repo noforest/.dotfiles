@@ -1887,7 +1887,7 @@ require("lazy").setup({
 
           -- Picker (other)
           { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-          { "<M-n>", function() Snacks.picker.notifications({ wrap = true }) end, desc = "Notification History" },
+          { "<leader>fn", function() Snacks.picker.notifications({ wrap = true }) end, desc = "Notification History" },
           { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
           { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },        -- ~~~~~~~~~~~~~~~ <leader>E correspond à mini.files (explorer flottant) ~~~~~~~~~~~~~~~~~~
 
@@ -1897,7 +1897,6 @@ require("lazy").setup({
           { "<leader>ga", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
           { "<leader>fk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
           { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
-          { "<leader>fd", function() Snacks.explorer() end, desc = "File Explorer" },
 
           -- Picker (Git)
           { "<leader>fb", function() Snacks.gitbrowse() end, desc = "Git Browse" },
@@ -1967,6 +1966,21 @@ require("lazy").setup({
 
 
   { "tpope/vim-fugitive" },
+
+  {
+      "princejoogie/dir-telescope.nvim",
+      dependencies = { "nvim-telescope/telescope.nvim" },
+      config = function()
+          require("dir-telescope").setup({
+              hidden = true,       -- show hidden files
+              no_ignore = false,   -- respect .gitignore
+              show_preview = true, -- show file preview
+              follow_symlinks = false,
+          })
+      end,
+  },
+
+
 
   -- Lua
   {"shortcuts/no-neck-pain.nvim"},
@@ -2511,38 +2525,6 @@ require("lazy").setup({
             },
           },
 
-          -- menu = {
-          --     border = "single",
-          --     draw = {
-          --         treesitter = { "lsp" },
-          --         columns = { { "kind_icon" }, { "label", gap = 1 } },
-          --         components = {
-          --             label = {
-          --                 -- Texte du label
-          --                 text = function(ctx)
-          --                     return ctx.label .. (ctx.label_detail or "")
-          --                 end,
-          --                 -- Mise en évidence des correspondances
-          --                 highlight = function(ctx)
-          --                     print("label_matched_indices:", vim.inspect(ctx.label_matched_indices))
-          --                     local highlights = {
-          --                         { 0, #ctx.label, group = ctx.deprecated and 'BlinkCmpLabelDeprecated' or 'BlinkCmpLabel' },
-          --                     }
-          --                     -- if ctx.label_detail then
-          --                     --     table.insert(highlights, { #ctx.label, #ctx.label + #ctx.label_detail, group = 'BlinkCmpLabelDetail' })
-          --                     -- end
-          --                     -- Ajout du surlignage pour les lettres correspondant au fuzzy matcher
-          --                     for _, idx in ipairs(ctx.label_matched_indices or {}) do
-          --                         table.insert(highlights, { idx, idx + 1, group = 'ErrorMsg' }) -- Test avec un groupe existant
-          --                     end
-          --
-          --                     return highlights
-          --                 end,
-          --             },
-          --         },
-          --     },
-          -- },
-
 
           -- Définition du groupe de surlignage pour les lettres correspondant au fuzzy matcher
           vim.api.nvim_set_hl(0, "BlinkCmpLabelMatch", { fg = "#ffffff", bg = "#ffff00", bold = true, underline = true }),
@@ -2605,35 +2587,23 @@ require("lazy").setup({
         { 'williamboman/mason-lspconfig.nvim' },
         {'ray-x/lsp_signature.nvim'},
       },
-      enabled = true,      --------------------------------------------------------------------------------------------------------------------------------
+      enabled = true,
 
       config = function()
-        -- This is where all the LSP shenanigans will live
         local lsp_zero = require('lsp-zero')
         lsp_zero.extend_lspconfig()
 
-        -- local capabilities = vim.lsp.protocol.make_client_capabilities()
-        -- capabilities.offsetEncoding = { "utf-16" }
-        --
         -- -- ---------------------------------------------------------------------------------
         -- capabilities.textDocument.completion.completionItem.snippetSupport = true -- IMPORTANT (false désactive tous les snippets)
-
         -- ---------------------------------------------------------------------------------
 
         local ft = vim.bo.filetype
         local caps = vim.lsp.protocol.make_client_capabilities()
-        caps.offsetEncoding = { "utf-16" }
+        -- caps.offsetEncoding = { "utf-16" }
         caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
 
         lsp_zero.on_attach(function(client, bufnr)
 
-
-            client.offset_encoding = 'utf-16'  -- Cela garantit que l'encodage d'offset est uniforme
-          -- Disable LSP for .txt files specifically
-          if vim.bo[bufnr].filetype == 'text' and client.name == 'textlsp' then
-            client.stop()  -- Stop the LSP client for `.txt` files
-            return
-          end
 
           lsp_zero.default_keymaps({ buffer = bufnr })
           local opts = { noremap = true, silent = true }
@@ -2650,8 +2620,6 @@ require("lazy").setup({
         require('mason-lspconfig').setup({
           ensure_installed = {},
           handlers = {
-            -- this first function is the "default handler"
-            -- it applies to every language server without a "custom handler"
             function(server_name)
               require('lspconfig')[server_name].setup({
                 capabilities = capabilities,
@@ -2663,7 +2631,6 @@ require("lazy").setup({
 
                 local ft = vim.bo.filetype
                 local caps = vim.lsp.protocol.make_client_capabilities()
-                caps.offsetEncoding = { "utf-16" }
                 caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
 
                 require('lspconfig').clangd.setup({
@@ -2674,12 +2641,10 @@ require("lazy").setup({
                 })
             end,
 
-            -- this is the "custom handler" for `lua_ls`
             lua_ls = function()
 
                 local ft = vim.bo.filetype
                 local caps = vim.lsp.protocol.make_client_capabilities()
-                caps.offsetEncoding = { "utf-16" }
                 caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
 
               local lua_opts = lsp_zero.nvim_lua_ls()
@@ -2710,6 +2675,7 @@ require("lazy").setup({
 
       end
     }
+
 
   }
 

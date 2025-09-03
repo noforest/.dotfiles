@@ -9,7 +9,7 @@ static const Block blocks[] = {
     {"",		"vap-volume",		0,			10},
     {"",		"vap-clock",		5,			1},
     {"",		"powermenu",		0,			13},
-    // {"",		"dualscreen_focus_on_big_one",		5,			0},
+    {"",		"dualscreen_focus_on_big_one",		5,			0},
     // {"",		"multiscreen.sh",		5,			0},
     {"",		"multiscreen",		5,			0},
 };

@@ -154,7 +154,10 @@ static const char *prtscrcmd[] = { "flameshot", "gui", NULL};
 //   spawn(&(const Arg) { .v = chrome });
 // }
 
-static const char *termcmd2[] = { "alacritty", NULL };
+// static const char *termcmd2[] = { "alacritty", NULL };
+
+static const char *tmuxterm[] = { "alacritty", "-e", "tmux", "new-session", "-A", "-s", "main", NULL };
+
 // static const char *chrome_with_options[] = {
 //   "google-chrome-stable",
 //   // "--ozone-platform-hint=auto",
@@ -168,7 +171,7 @@ Autostarttag autostarttaglist[] = {
   // {.cmd = nvimcmd, .tags = 1 << 7 },
   // {.cmd = chrome_with_options, .tags = 1 << 0 },
   {.cmd = firefox_launch, .tags = 1 << 0 },
-  {.cmd = termcmd2, .tags = 1 << 1 },
+  {.cmd = tmuxterm, .tags = 1 << 1 },
   {.cmd = NULL, .tags = 0 },
 };
 

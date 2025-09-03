@@ -27,7 +27,8 @@ opt.scrolloff = 3
 -- options.lua
 vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
-vim.opt.fileencodings = { "utf-8", "latin1" } -- facultatif : permet la lecture de fichiers en latin1
+-- vim.opt.fileencodings = { "utf-8", "utf-16", "latin1" }
+vim.opt.fileencodings = { "utf-8", "latin1" }
 
 
 opt.wrap = false

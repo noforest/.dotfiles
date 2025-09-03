@@ -86,17 +86,20 @@ bindkey "^[[1;5D" backward-word    # Ctrl + flèche gauche
 bindkey "^[[1;5C" forward-word     # Ctrl + flèche droite
 
 
-# Function to fuzzy-find directories only
-ffind_dir() {
+# recherche fuzzy dans tous les dossiers, y compris cachés
+fuzzy_cd() {
     local dir
-    dir=$(find . -type d -not -path '*/\.*' 2> /dev/null | fzf --height 40% --reverse --prompt="Directories> ")
-    if [[ -n "$dir" ]]; then
-        cd "$dir"
-    fi
+    dir=$(find . -type d ! -path '*/.*' -print 2>/dev/null \
+        | fzf --preview 'ls -la {}' \
+        --height=40% \
+        --bind 'ctrl-h:reload(find . -type d -print 2>/dev/null)' \
+        --bind 'esc:abort' \
+        --header 'Ctrl-H: to include hidden folders') || return
+    cd "$dir" || return
 }
 
-# Bind Ctrl+F to ffind_dir function
-bindkey -s '^F' 'ffind_dir\n'
+# pour zsh
+bindkey -s '^f' 'fuzzy_cd\n'
 
 # Fonction pour vérifier si la commande commence par "ssh"
 function sshc() {
@@ -127,7 +130,7 @@ git() {
 }
 
 # ********************* Pour projet PR105 ****************************
-export GSL_PATH="/home/for/Documents/s6/projets/gsl-2.8/install"
+export GSL_PATH="/home/for/Documents/enseirb/s6/projets/gsl-2.8/install"
 
 # ********************************************************************
 
@@ -140,9 +143,9 @@ update_last_dir() {
 
 chpwd() {
 
-    if [[ "$PWD" == "/home/for/Documents/s6/projets/pr105-coursidor-26243" ]]; then
+    if [[ "$PWD" == "/home/for/Documents/enseirb/s6/projets/pr105-coursidor-26243" ]]; then
         td
-    elif [[ "$PWD" == "/home/for/Documents/s6/projets/pr106-actor-26243" ]]; then
+    elif [[ "$PWD" == "/home/for/Documents/enseirb/s6/projets/pr106-actor-26243" ]]; then
         td
     fi
     update_last_dir;
@@ -204,6 +207,10 @@ set -o emacs
 # if [ -n "$PS1" ] && [ -z "$TMUX" ]; then
 #     tmux new-session -A -s main
 # fi
+
+if [[ -z $TMUX ]] && [[ -z $DISPLAY ]]; then
+    exec tmux
+fi
 
 
 #################################################################

@@ -31,6 +31,7 @@ dwmblocks &
 xset dpms 1800 0 0 &       #standby/suspend/off
 xss-lock -- slock &
 
-xautolock -time 35 -locker "systemctl suspend" -detectsleep &
+# remplacer à l'aide du programme acpid + le script /etc/acpi/ac_adapter.sh
+# xautolock -time 35 -locker "systemctl suspend" -detectsleep &
 
 exec dwm
