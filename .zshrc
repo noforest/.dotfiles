@@ -87,16 +87,18 @@ bindkey "^[[1;5C" forward-word     # Ctrl + flèche droite
 
 
 # recherche fuzzy dans tous les dossiers, y compris cachés
+
 fuzzy_cd() {
     local dir
-    dir=$(find . -type d ! -path '*/.*' -print 2>/dev/null \
-        | fzf --preview 'ls -la {}' \
-        --height=40% \
-        --bind 'ctrl-h:reload(find . -type d -print 2>/dev/null)' \
-        --bind 'esc:abort' \
-        --header 'Ctrl-H: to include hidden folders') || return
+    dir=$(find "$HOME" -type d ! -path '*/.*' -print 2>/dev/null \
+        | fzf \
+              --height=40% \
+              --bind 'ctrl-h:reload(find . -type d -print 2>/dev/null)' \
+              --bind 'esc:abort' \
+              --header 'Ctrl-H: to include hidden folders') || return
     cd "$dir" || return
 }
+
 
 # pour zsh
 bindkey -s '^f' 'fuzzy_cd\n'

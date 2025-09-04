@@ -217,14 +217,29 @@ end, { desc = "Toggle colorcolumn at 80" })
 vim.g.startup_dir = vim.fn.getcwd()
 
 vim.keymap.set("n", "<leader>z", function()
-    vim.ui.input({ prompt = "Path for :Z ", default = "" }, function(input)
+    vim.ui.input({ 
+        prompt = "Path for :Z ", 
+        default = "", 
+        completion = "file"  -- enables path auto-completion
+    }, function(input)
         if input and input ~= "" then
             vim.cmd("Z " .. input)
         end
     end)
 end, { desc = "Run :Z with user input path" })
 
+
 vim.keymap.set('n', '<leader><BS>', function()
     vim.cmd('cd ' .. vim.g.startup_dir)
     vim.notify('Returned to: ' .. vim.g.startup_dir, vim.log.levels.INFO, { title = 'Initial Directory' })
 end, { desc = 'Return to the Neovim startup directory' })
+
+
+-- Empêcher la sélection automatique du premier item
+vim.o.completeopt = "menuone,noinsert,noselect"
+
+vim.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true, noremap = true})
+vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<C-n>"', {expr = true, noremap = true})
+vim.api.nvim_set_keymap('i', '<C-p>', 'pumvisible() ? "\\<C-p>" : "\\<C-p>"', {expr = true, noremap = true})
+vim.api.nvim_set_keymap('i', '<Right>', 'pumvisible() ? "\\<C-n>" : "\\<Down>"', {expr = true, noremap = true})
+vim.api.nvim_set_keymap('i', '<Left>', 'pumvisible() ? "\\<C-p>" : "\\<Up>"', {expr = true, noremap = true})

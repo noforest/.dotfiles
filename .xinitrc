@@ -28,10 +28,11 @@ xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Scrolling Pixel Dis
 xinput --set-prop "pointer:Logitech K400 Plus" "libinput Natural Scrolling Enabled" 1 &
 libinput-gestures-setup restart &
 dwmblocks & 
+xset s off             # important pour ne pas avoir le lock à 10 min (Ne pas déclencher le screensaver X à 10 min)
 xset dpms 1800 0 0 &       #standby/suspend/off
 xss-lock -- slock &
 
-# remplacer à l'aide du programme acpid + le script /etc/acpi/ac_adapter.sh
+# mit dans /usr/local/bin/ac_adapter.sh
 # xautolock -time 35 -locker "systemctl suspend" -detectsleep &
 
 exec dwm
