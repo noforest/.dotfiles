@@ -218,11 +218,19 @@ static const Key keys[] = {
 	{MODKEY, 			XK_z,	  shiftview,	   {.i = +1}},
 	{MODKEY, 			XK_a,	  shiftview,	   {.i = -1}},
 	{ MODKEY|ShiftMask,             XK_s,      spawn,          {.v = prtscrcmd } },
-	{ 0, XF86XK_AudioMute,                         spawn,                  SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
-	{ 0, XF86XK_AudioRaiseVolume,                  spawn,                  SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)") },
-	{ 0, XF86XK_AudioLowerVolume,                  spawn,                  SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%+ && wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)") },
-	{ 0, XF86XK_MonBrightnessUp,                   spawn,                  {.v = (const char*[]){ "xbacklight", "-inc", "15", NULL } } },
-	{ 0, XF86XK_MonBrightnessDown,                 spawn,                  {.v = (const char*[]){ "xbacklight", "-dec", "15", NULL } } },
+    // { 0, XF86XK_AudioMute,                         spawn,                  SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
+	// { 0, XF86XK_AudioRaiseVolume,                  spawn,                  SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)") },
+	// { 0, XF86XK_AudioLowerVolume,                  spawn,                  SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%+ && wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)") },
+    // { 0, XF86XK_MonBrightnessUp,                   spawn,                  {.v = (const char*[]){ "xbacklight", "-inc", "15", NULL } } },
+    // { 0, XF86XK_MonBrightnessDown,                 spawn,                  {.v = (const char*[]){ "xbacklight", "-dec", "15", NULL } } },
+
+    // volume
+    { 0, XF86XK_AudioMute,                          spawn,                  SHCMD("/usr/local/bin/dunst_vol.sh muted; kill -44 $(pidof dwmblocks)") },
+    { 0, XF86XK_AudioRaiseVolume,                   spawn,                  SHCMD("/usr/local/bin/dunst_vol.sh up; kill -44 $(pidof dwmblocks)") },
+    { 0, XF86XK_AudioLowerVolume,                   spawn,                  SHCMD("/usr/local/bin/dunst_vol.sh down; kill -44 $(pidof dwmblocks)") },
+    // monitor brighness
+    { 0, XF86XK_MonBrightnessUp,                    spawn,                  SHCMD("/usr/local/bin/dunst_brightness.sh up") },
+    { 0, XF86XK_MonBrightnessDown,                  spawn,                  SHCMD("/usr/local/bin/dunst_brightness.sh down") },
 
   // { MODKEY,                       XK_g,      spawn,          SHCMD("google-chrome-stable --enable-features=TouchpadOverscrollHistoryNavigation") },
     { MODKEY,                       XK_g,      spawn,          SHCMD("firefox") },

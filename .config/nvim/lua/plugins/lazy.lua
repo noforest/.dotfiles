@@ -596,6 +596,10 @@ require("lazy").setup({
                                 actions.close(prompt_bufnr)
                                 local dir = from_entry.path(entry)
                                 vim.api.nvim_set_current_dir(dir)
+
+                                vim.notify("Current directory: " .. dir,
+                                vim.log.levels.INFO,
+                                { title = "Directory changed" })
                             end)
 
                             -- Ctrl+h pour toggle les hidden files
@@ -737,8 +741,15 @@ require("lazy").setup({
             })
 
             -- ===== Keymaps =====
-            vim.keymap.set("n", "<Leader>fd", createCdFunction(vim.fn.expand('$HOME'), false), { desc = "Cd into home" })
-            vim.keymap.set("n", "<C-f>", createCdFunction(vim.fn.expand('$HOME'), false), { desc = "Cd into home" })
+            -- vim.keymap.set("n", "<Leader>fd", createCdFunction(vim.fn.expand('$HOME'), false), { desc = "Cd into home" })
+            -- pcall(vim.keymap.del, "n", "<C-f>")
+            -- vim.keymap.set("n", "<C-f>", createCdFunction(vim.fn.expand('$HOME'), false), { desc = "Cd into home" })
+
+            vim.defer_fn(function()
+                local homeCd = createCdFunction(vim.fn.expand('$HOME'), false)
+                vim.keymap.set("n", "<Leader>fd", homeCd, { desc = "Cd into home", noremap = true, silent = true })
+                vim.keymap.set("n", "<C-f>", homeCd, { desc = "Cd into home", noremap = true, silent = true })
+            end, 0)
         end,
     },
 
@@ -1882,6 +1893,7 @@ require("lazy").setup({
                             ["<a-d>"] = { "inspect", mode = { "n", "i" } },
                             ["<a-f>"] = { "toggle_follow", mode = { "i", "n" } },
                             ["<a-h>"] = { "toggle_hidden", mode = { "i", "n" } }, -- IMPORTANT
+                            ["<c-h>"] = { "toggle_hidden", mode = { "i", "n" } }, -- IMPORTANT
                             ["<a-i>"] = { "toggle_ignored", mode = { "i", "n" } },
                             ["<a-m>"] = { "toggle_maximize", mode = { "i", "n" } },
                             ["<a-p>"] = { "toggle_preview", mode = { "i", "n" } },
@@ -1946,6 +1958,7 @@ require("lazy").setup({
                             ["<a-d>"] = "inspect",
                             ["<a-f>"] = "toggle_follow",
                             ["<a-h>"] = "toggle_hidden", -- IMPORTANT
+                            ["<c-h>"] = "toggle_hidden",
                             ["<a-i>"] = "toggle_ignored",
                             ["<a-m>"] = "toggle_maximize",
                             ["<a-p>"] = "toggle_preview",
@@ -2646,7 +2659,7 @@ require("lazy").setup({
                     enabled = true,
 
                     keymap = { 
-                        preset = 'inherit',
+                        -- preset = 'inherit',
                         -- ['<Esc>'] = { 'hide' }, -- marche mais je peux plus quitter la cmdline ...
 
                     },

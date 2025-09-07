@@ -3,6 +3,7 @@
 exec >/home/for/.xinitrc.log 2>&1
 picom -b &
 dunst &
+playerctld daemon &
 # feh --bg-fill ~/Pictures/from_twitter/IMG_7741.JPG &
 # feh --bg-fill Pictures/Wallpapers/a_ski_lift_with_a_chair_in_the_air.jpg &
 # feh --bg-fill ~/Pictures/Wallpapers/purple_mountain.JPG &

@@ -241,5 +241,5 @@ vim.o.completeopt = "menuone,noinsert,noselect"
 vim.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true, noremap = true})
 vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<C-n>"', {expr = true, noremap = true})
 vim.api.nvim_set_keymap('i', '<C-p>', 'pumvisible() ? "\\<C-p>" : "\\<C-p>"', {expr = true, noremap = true})
-vim.api.nvim_set_keymap('i', '<Right>', 'pumvisible() ? "\\<C-n>" : "\\<Down>"', {expr = true, noremap = true})
-vim.api.nvim_set_keymap('i', '<Left>', 'pumvisible() ? "\\<C-p>" : "\\<Up>"', {expr = true, noremap = true})
+
+

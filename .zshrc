@@ -77,7 +77,7 @@ alias lg="lazygit"
 
 alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-# bindkey '^[[P' delete-char
+
 
 bindkey "^[[3~" delete-char
 bindkey "^[[1;3D" backward-word    # Alt + flèche gauche
@@ -157,6 +157,27 @@ chpwd() {
 if [ -f "$HOME/.last_dir" ]; then
     export TERMINAL_LAST_DIR="$(cat "$HOME/.last_dir")"
 fi
+
+
+setopt IGNORE_EOF
+
+function confirm-exit() {
+    if [[ -z $BUFFER ]]; then
+        echo -n "Are you sure you want to quit? (y/N)"
+        if read -q; then
+            echo
+            exit
+        else
+            echo
+            zle redisplay
+        fi
+    else
+        zle delete-char-or-list
+    fi
+}
+
+zle -N confirm-exit
+bindkey '^D' confirm-exit
 
 
 # if [[ "$XDG_SESSION_TYPE" == "x11" ]]; then
