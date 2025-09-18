@@ -203,8 +203,17 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND=0
 #   echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
 # }
 
-if ps -p $(ps -o ppid= -p $$) | grep -q alacritty; then
+# if ps -p $(ps -o ppid= -p $$) | grep -q alacritty; then
+#     precmd() {
+#         echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
+#     }
+# fi
+
+
+# Vérifie si on est bien lancé depuis Alacritty (même dans tmux)
+if [[ -n "$ALACRITTY_WINDOW_ID" ]]; then
     precmd() {
+        # Change le titre de la fenêtre alacritty avec le chemin courant
         echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
     }
 fi

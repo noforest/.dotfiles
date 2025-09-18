@@ -105,3 +105,13 @@ vim.lsp.handlers["textDocument/signatureHelp"] = function(err, result, ctx, conf
     -- Appeler le gestionnaire par défaut si l'erreur n'est pas celle que nous voulons ignorer
     vim.lsp.handlers.signature_help(err, result, ctx, config)
 end
+
+
+
+-- Enregistre le répertoire courant dans zoxide à chaque changement
+vim.api.nvim_create_autocmd({'DirChanged'}, {
+    pattern = '*',
+    callback = function()
+        vim.fn.jobstart({'zoxide', 'add', vim.fn.getcwd()})
+    end
+})

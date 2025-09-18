@@ -68,7 +68,7 @@ progress_bar_min_width = 10
 # Set the maximum width for the progress bar
 # progress_bar_max_width = 400
 progress_bar_max_width = 210
-
+#
 
 # Show how many messages are currently hidden (because of geometry).
 indicate_hidden = yes

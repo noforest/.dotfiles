@@ -2867,6 +2867,61 @@ require("lazy").setup({
                 end)
 
 
+                -- require('mason-lspconfig').setup({
+                --     ensure_installed = {},
+                --     handlers = {
+                --         function(server_name)
+                --             require('lspconfig')[server_name].setup({
+                --                 capabilities = capabilities,
+                --             })
+                --         end,
+                --
+                --
+                --
+                --         clangd = function()
+                --             local ft = vim.bo.filetype
+                --             local caps = vim.lsp.protocol.make_client_capabilities()
+                --             caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
+                --
+                --             require('lspconfig').clangd.setup({
+                --                 capabilities = caps,
+                --                 -- cmd = { "clangd", "--background-index" },
+                --                 filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+                --                 root_dir = require('lspconfig.util').root_pattern('compile_commands.json', '.clangd',
+                --                     '.git'),
+                --             })
+                --         end,
+                --
+                --         lua_ls = function()
+                --             local ft = vim.bo.filetype
+                --             local caps = vim.lsp.protocol.make_client_capabilities()
+                --             caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
+                --
+                --             local lua_opts = lsp_zero.nvim_lua_ls()
+                --             require('lspconfig').lua_ls.setup(vim.tbl_deep_extend("force", lua_opts, {
+                --                 capabilities = caps,
+                --             }))
+                --         end,
+                --
+                --
+                --         -- pyright = function()
+                --         --   require('lspconfig').pyright.setup({
+                --         --     capabilities = capabilities,
+                --         --     on_attach = function(_, bufnr) -- '_' signifie que le client est ignoré
+                --         --       -- Set indentation to 2 spaces for Python
+                --         --       require('lsp_signature').toggle_float_win(false)
+                --         --       vim.bo[bufnr].tabstop = 4
+                --         --       vim.bo[bufnr].shiftwidth = 4
+                --         --       vim.bo[bufnr].expandtab = true
+                --         --       vim.bo[bufnr].autoindent = true
+                --         --       vim.bo[bufnr].smartindent = true
+                --         --     end,
+                --         --   })
+                --         -- end,
+                --
+                --
+                --     }
+                -- })
                 require('mason-lspconfig').setup({
                     ensure_installed = {},
                     handlers = {
@@ -2876,6 +2931,31 @@ require("lazy").setup({
                             })
                         end,
 
+                        -- Configuration spécifique pour jdtls
+                        jdtls = function()
+                            local caps = vim.lsp.protocol.make_client_capabilities()
+                            caps.textDocument.completion.completionItem.snippetSupport = true
+
+                            require('lspconfig').jdtls.setup({
+                                capabilities = caps,
+                                root_dir = function(fname)
+                                    return require('lspconfig.util').root_pattern(
+                                        'gradlew', 
+                                        '.git', 
+                                        'pom.xml',
+                                        'build.gradle',
+                                        'settings.gradle'
+                                    )(fname) or vim.fn.getcwd()
+                                end,
+                                on_init = function(client)
+                                    -- Correction pour éviter l'erreur des registrations nil
+                                    client.server_capabilities.workspace = {
+                                        configuration = false,
+                                        workspaceFolders = false,
+                                    }
+                                end,
+                            })
+                        end,
 
                         clangd = function()
                             local ft = vim.bo.filetype
@@ -2884,10 +2964,12 @@ require("lazy").setup({
 
                             require('lspconfig').clangd.setup({
                                 capabilities = caps,
-                                -- cmd = { "clangd", "--background-index" },
                                 filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-                                root_dir = require('lspconfig.util').root_pattern('compile_commands.json', '.clangd',
-                                    '.git'),
+                                root_dir = require('lspconfig.util').root_pattern(
+                                    'compile_commands.json', 
+                                    '.clangd',
+                                    '.git'
+                                ),
                             })
                         end,
 
@@ -2902,25 +2984,34 @@ require("lazy").setup({
                             }))
                         end,
 
+                        -- Handler global pour capturer l'erreur de registration
+                        function(server_name)
+                            local config = {
+                                capabilities = capabilities,
+                            }
 
-                        -- pyright = function()
-                        --   require('lspconfig').pyright.setup({
-                        --     capabilities = capabilities,
-                        --     on_attach = function(_, bufnr) -- '_' signifie que le client est ignoré
-                        --       -- Set indentation to 2 spaces for Python
-                        --       require('lsp_signature').toggle_float_win(false)
-                        --       vim.bo[bufnr].tabstop = 4
-                        --       vim.bo[bufnr].shiftwidth = 4
-                        --       vim.bo[bufnr].expandtab = true
-                        --       vim.bo[bufnr].autoindent = true
-                        --       vim.bo[bufnr].smartindent = true
-                        --     end,
-                        --   })
-                        -- end,
+                            -- Ajouter le handler pour client/registerCapability seulement si nécessaire
+                            if server_name == "jdtls" then
+                                config.handlers = {
+                                    ["client/registerCapability"] = function(err, result, ctx, config)
+                                        if result and result.registrations then
+                                            return vim.lsp.handlers.client_registerCapability(err, result, ctx, config)
+                                        end
+                                    end
+                                }
+                            end
 
-
+                            require('lspconfig')[server_name].setup(config)
+                        end,
                     }
                 })
+
+                -- Ajouter le handler global pour éviter l'erreur (en dehors de mason-lspconfig)
+                vim.lsp.handlers['client/registerCapability'] = function(err, result, ctx, config)
+                    if result and result.registrations then
+                        return vim.lsp.handlers.client_registerCapability(err, result, ctx, config)
+                    end
+                end
             end
         }
 

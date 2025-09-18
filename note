@@ -141,3 +141,65 @@ Section "InputClass"
 	MatchIsPointer "on"
 	Option "AccelSpeed" "-0.5"
 EndSection
+
+
+
+
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Forcer le chargement précoce des modules nécessaires :
+
+    Éditez le fichier /etc/mkinitcpio.conf :
+    bash
+
+sudo nano /etc/mkinitcpio.conf
+
+Ajoutez i2c_hid et hid_multitouch dans la section MODULES :
+text
+
+MODULES=(i2c_hid hid_multitouch)
+
+Régénérez l'initramfs :
+bash
+
+sudo mkinitcpio -P
+
+Ajouter un délai d'attente pour le périphérique I2C (si nécessaire) :
+
+    Créez un fichier de service systemd :
+    bash
+
+sudo nano /etc/systemd/system/i2c-wait.service
+
+Ajoutez ce contenu :
+text
+
+[Unit]
+Description=Wait for I2C devices to be ready
+Before=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/sleep 3
+
+[Install]
+WantedBy=graphical.target
+
+Activez le service :
+bash
+
+sudo systemctl enable i2c-wait.service
+
+Vérifier les paramètres du noyau :
+
+    Ajoutez i2c-hid.acpi_sleep=3 aux paramètres du noyau dans le gestionnaire de boot (GRUB ou systemd-boot) pour gérer les problèmes de veille ACPI.
+
+Redémarrer :
+bash
+
+reboot
