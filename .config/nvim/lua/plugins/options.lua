@@ -115,3 +115,68 @@ vim.api.nvim_create_autocmd({'DirChanged'}, {
         vim.fn.jobstart({'zoxide', 'add', vim.fn.getcwd()})
     end
 })
+
+
+
+-- vim.api.nvim_create_autocmd("BufReadPost", {
+--     pattern = "*.java",
+--     callback = function()
+--         -- attendre que jdtls soit attaché
+--         vim.defer_fn(function()
+--             local bufnr = vim.api.nvim_get_current_buf()
+--             for _, client in pairs(vim.lsp.get_clients({bufnr = bufnr})) do
+--                 if client.name == "jdtls" then
+--                     vim.cmd("LspStop jdtls")
+--                     print("jdtls stopped for this Java file")
+--                     break
+--                 end
+--             end
+--         end, 10000)  -- délai en ms, ajustable
+--     end,
+-- })
+
+
+
+-- Autocmd déclenché à chaque fois qu'un client LSP s'attache à un buffer
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--     callback = function(args)
+--         local client = vim.lsp.get_client_by_id(args.data.client_id)
+--         local bufnr = args.buf
+--         -- si c'est jdtls et un fichier Java
+--         if client.name == "jdtls" and vim.bo[bufnr].filetype == "java" then
+--             vim.cmd("LspStop jdtls")
+--             print("jdtls stopped automatically for this Java buffer")
+--         end
+--     end,
+-- })
+--
+--
+-- -- Override vim.notify pour ignorer le warning de jdtls
+-- local original_notify = vim.notify
+-- vim.notify = function(msg, level, opts)
+--     if type(msg) == "string" and msg:match("Client jdtls quit") then
+--         return -- ignore ce message
+--     end
+--     original_notify(msg, level, opts)
+-- end
+
+
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--     callback = function(args)
+--         local client = vim.lsp.get_client_by_id(args.data.client_id)
+--         local bufnr = args.buf
+--
+--         if client.name == "jdtls" and vim.bo[bufnr].filetype == "java" then
+--             -- Désactive la complétion
+--             client.server_capabilities.completionProvider = nil
+--             -- Désactive la signature help
+--             client.server_capabilities.signatureHelpProvider = nil
+--             -- Désactive le hover
+--             client.server_capabilities.hoverProvider = nil
+--             -- Désactive le document formatting si tu veux
+--             client.server_capabilities.documentFormattingProvider = false
+--
+--             print("jdtls completions/snippets/signature/hover disabled for this buffer")
+--         end
+--     end,
+-- })

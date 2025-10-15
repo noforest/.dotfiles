@@ -802,31 +802,31 @@ require("lazy").setup({
 
 
 
-    {
-        "karb94/neoscroll.nvim",
-        config = function()
-            require('neoscroll').setup({
-                mappings = { -- Keys to be mapped to their corresponding default scrolling animation
-                    '<C-u>', '<C-d>',
-                    '<C-b>', '<C-f>',
-                    '<C-y>', '<C-e>',
-                    -- 'zt', 'zz', 'zb',
-                },
-                hide_cursor = false,         -- Hide cursor while scrolling
-                stop_eof = true,             -- Stop at <EOF> when scrolling downwards
-                respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-                cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-                easing = 'linear',           -- Default easing function
-                pre_hook = nil,              -- Function to run before the scrolling animation starts
-                post_hook = nil,             -- Function to run after the scrolling animation ends
-                performance_mode = false,    -- Disable "Performance Mode" on all buffers.
-                duration_multiplier = 0.5,   -- plus rapide
-                ignored_events = {           -- Events ignored while scrolling
-                    'WinScrolled', 'CursorMoved'
-                },
-            })
-        end
-    },
+    -- {
+    --     "karb94/neoscroll.nvim",
+    --     config = function()
+    --         require('neoscroll').setup({
+    --             mappings = { -- Keys to be mapped to their corresponding default scrolling animation
+    --                 '<C-u>', '<C-d>',
+    --                 '<C-b>', '<C-f>',
+    --                 '<C-y>', '<C-e>',
+    --                 -- 'zt', 'zz', 'zb',
+    --             },
+    --             hide_cursor = false,         -- Hide cursor while scrolling
+    --             stop_eof = true,             -- Stop at <EOF> when scrolling downwards
+    --             respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
+    --             cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
+    --             easing = 'linear',           -- Default easing function
+    --             pre_hook = nil,              -- Function to run before the scrolling animation starts
+    --             post_hook = nil,             -- Function to run after the scrolling animation ends
+    --             performance_mode = false,    -- Disable "Performance Mode" on all buffers.
+    --             duration_multiplier = 0.5,   -- plus rapide
+    --             ignored_events = {           -- Events ignored while scrolling
+    --                 'WinScrolled', 'CursorMoved'
+    --             },
+    --         })
+    --     end
+    -- },
 
     -- {
     --     'mg979/vim-visual-multi',
@@ -981,15 +981,73 @@ require("lazy").setup({
         }
     },
 
+    -- {
+    --     "lervag/vimtex",
+    --     lazy = false, -- we don't want to lazy load VimTeX
+    --     -- tag = "v2.15", -- uncomment to pin to a specific release
+    --     init = function()
+    --         -- VimTeX configuration goes here, e.g.
+    --         vim.g.vimtex_view_method = "zathura"
+    --         vim.g.maplocalleader = "ù"
+    --         vim.g.vimtex_quickfix_mode = 0 -- enlève la fenêtre de warning à chaque fois que je compile.
+    --     end
+    -- },
+
     {
         "lervag/vimtex",
-        lazy = false, -- we don't want to lazy load VimTeX
-        -- tag = "v2.15", -- uncomment to pin to a specific release
+        lazy = false, -- on ne veut pas charger VimTeX en lazy
+        -- tag = "v2.15", -- décommente si tu veux figer la version
         init = function()
-            -- VimTeX configuration goes here, e.g.
+            -- Configuration de base
             vim.g.vimtex_view_method = "zathura"
             vim.g.maplocalleader = "ù"
-            vim.g.vimtex_quickfix_mode = 0 -- enlève la fenêtre de warning à chaque fois que je compile.
+            vim.g.vimtex_quickfix_mode = 0 -- enlève la fenêtre de warning à chaque compilation
+
+            -- --- Compilateur par défaut : PdfLaTeX ---
+            vim.g.vimtex_compiler_method = "latexmk"
+            vim.g.vimtex_compiler_latexmk = {
+                build_dir = '',
+                callback = 1,
+                continuous = 1,
+                executable = 'latexmk',
+                options = {
+                    '-pdf', -- compile avec pdflatex par défaut
+                    '-interaction=nonstopmode',
+                    '-synctex=1',
+                },
+            }
+
+            -- --- Raccourci pour basculer vers XeLaTeX ---
+            vim.keymap.set("n", "<localleader>x", function()
+                vim.g.vimtex_compiler_latexmk = {
+                    build_dir = '',
+                    callback = 1,
+                    continuous = 1,
+                    executable = 'latexmk',
+                    options = {
+                        '-xelatex',
+                        '-interaction=nonstopmode',
+                        '-synctex=1',
+                    },
+                }
+                print("VimTeX : compilation avec XeLaTeX activée")
+            end, { desc = "Basculer vers XeLaTeX pour VimTeX" })
+
+            -- --- Raccourci pour revenir à PdfLaTeX ---
+            vim.keymap.set("n", "<localleader>p", function()
+                vim.g.vimtex_compiler_latexmk = {
+                    build_dir = '',
+                    callback = 1,
+                    continuous = 1,
+                    executable = 'latexmk',
+                    options = {
+                        '-pdf',
+                        '-interaction=nonstopmode',
+                        '-synctex=1',
+                    },
+                }
+                print("VimTeX : compilation avec PdfLaTeX activée")
+            end, { desc = "Basculer vers PdfLaTeX pour VimTeX" })
         end
     },
     {
@@ -1014,7 +1072,7 @@ require("lazy").setup({
 
         config = function()
             require 'nvim-treesitter.configs'.setup {
-                ensure_installed = { 'lua', 'python', 'bash', 'markdown', 'markdown_inline', 'javascript', "c", "vim", "vimdoc", "query", "rust", "typescript", }, -- ou une liste des langages que tu veux
+                ensure_installed = { 'lua', 'python', 'bash', 'markdown', 'markdown_inline', 'javascript', "c", "vim", "vimdoc", "query", "rust", "typescript", "java" }, -- ou une liste des langages que tu veux
                 highlight = { enable = true, additional_vim_regex_highlighting = false, },                                                                         -- active la coloration syntaxique
                 indent = { enable = false },                                                                                                                       --METTRE SUR FALSE SINON HORRIBLES LAGS
             }
@@ -1713,6 +1771,10 @@ require("lazy").setup({
     },
 
     { 'akinsho/toggleterm.nvim', version = "*", config = true },
+
+    {
+        'jghauser/follow-md-links.nvim'
+    },
 
     {
         'echasnovski/mini.surround',
@@ -2922,40 +2984,20 @@ require("lazy").setup({
                 --
                 --     }
                 -- })
+
                 require('mason-lspconfig').setup({
                     ensure_installed = {},
                     handlers = {
+
                         function(server_name)
+
                             require('lspconfig')[server_name].setup({
                                 capabilities = capabilities,
                             })
+
                         end,
 
-                        -- Configuration spécifique pour jdtls
-                        jdtls = function()
-                            local caps = vim.lsp.protocol.make_client_capabilities()
-                            caps.textDocument.completion.completionItem.snippetSupport = true
-
-                            require('lspconfig').jdtls.setup({
-                                capabilities = caps,
-                                root_dir = function(fname)
-                                    return require('lspconfig.util').root_pattern(
-                                        'gradlew', 
-                                        '.git', 
-                                        'pom.xml',
-                                        'build.gradle',
-                                        'settings.gradle'
-                                    )(fname) or vim.fn.getcwd()
-                                end,
-                                on_init = function(client)
-                                    -- Correction pour éviter l'erreur des registrations nil
-                                    client.server_capabilities.workspace = {
-                                        configuration = false,
-                                        workspaceFolders = false,
-                                    }
-                                end,
-                            })
-                        end,
+                        -- pour jdtls, commenter les dernières lignes dans le fichier plugin/options.lua, pour reprendre la complétion
 
                         clangd = function()
                             local ft = vim.bo.filetype
@@ -2983,35 +3025,8 @@ require("lazy").setup({
                                 capabilities = caps,
                             }))
                         end,
-
-                        -- Handler global pour capturer l'erreur de registration
-                        function(server_name)
-                            local config = {
-                                capabilities = capabilities,
-                            }
-
-                            -- Ajouter le handler pour client/registerCapability seulement si nécessaire
-                            if server_name == "jdtls" then
-                                config.handlers = {
-                                    ["client/registerCapability"] = function(err, result, ctx, config)
-                                        if result and result.registrations then
-                                            return vim.lsp.handlers.client_registerCapability(err, result, ctx, config)
-                                        end
-                                    end
-                                }
-                            end
-
-                            require('lspconfig')[server_name].setup(config)
-                        end,
                     }
                 })
-
-                -- Ajouter le handler global pour éviter l'erreur (en dehors de mason-lspconfig)
-                vim.lsp.handlers['client/registerCapability'] = function(err, result, ctx, config)
-                    if result and result.registrations then
-                        return vim.lsp.handlers.client_registerCapability(err, result, ctx, config)
-                    end
-                end
             end
         }
 

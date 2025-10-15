@@ -178,6 +178,7 @@ Autostarttag autostarttaglist[] = {
 };
 
 
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
   // { MODKEY|ControlMask,           XK_f,      toggleratiofullscr,  {0} },
@@ -245,6 +246,7 @@ static const Key keys[] = {
   { MODKEY|ShiftMask,             XK_l,      spawn,          SHCMD("slock") },
 
 };
+
 
 /* button definitions */
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */

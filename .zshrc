@@ -40,6 +40,7 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 
 
+alias handbrake="ghb"
 alias sudo='sudo '
 alias nv='nvim'
 alias sn='shutdown now'
@@ -50,7 +51,7 @@ alias rm="rm -i"
 alias py="python3"
 alias todo="td"
 alias cat=bat
-alias less="bat --paging always"
+# alias less="bat --paging always"
 alias du="dust -r"
 alias yzai="y"
 alias yz="y"
@@ -159,25 +160,25 @@ if [ -f "$HOME/.last_dir" ]; then
 fi
 
 
-setopt IGNORE_EOF
+# setopt IGNORE_EOF
 
-function confirm-exit() {
-    if [[ -z $BUFFER ]]; then
-        echo -n "Are you sure you want to quit? (y/N)"
-        if read -q; then
-            echo
-            exit
-        else
-            echo
-            zle redisplay
-        fi
-    else
-        zle delete-char-or-list
-    fi
-}
-
-zle -N confirm-exit
-bindkey '^D' confirm-exit
+# function confirm-exit() {
+#     if [[ -z $BUFFER ]]; then
+#         echo -n "Are you sure you want to quit? (y/N)"
+#         if read -q; then
+#             echo
+#             exit
+#         else
+#             echo
+#             zle redisplay
+#         fi
+#     else
+#         zle delete-char-or-list
+#     fi
+# }
+#
+# zle -N confirm-exit
+# bindkey '^D' confirm-exit
 
 
 # if [[ "$XDG_SESSION_TYPE" == "x11" ]]; then
@@ -230,15 +231,12 @@ function y() {
 #################################################################
 # config pour tmux
 
-export TERM="tmux-256color"
+# export TERM="tmux-256color"
+export TERM="xterm-256color"
 export COLORTERM=truecolor
 
 # sert pour tmux pour pas rentrer en mode normal notamment
 set -o emacs
-
-# if [ -n "$PS1" ] && [ -z "$TMUX" ]; then
-#     tmux new-session -A -s main
-# fi
 
 if [[ -z $TMUX ]] && [[ -z $DISPLAY ]]; then
     exec tmux

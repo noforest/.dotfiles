@@ -13,13 +13,13 @@ la transparence c'est avec picom (config dans .config/picom/picom.conf
 
 les scripts accompagnat dwmblocks sont dans ~/.local/bin/scripts TOUS EN CHMOD +X
 
-trÃs important:
-	pour Ãviter bug d'affichage quand je log out (mod+shift+q)
+trÃƒs important:
+	pour Ãƒviter bug d'affichage quand je log out (mod+shift+q)
 	j'ai mis une fonction dans dwm.c : quit_properly
 	donc a la place du "quit" pour mod+shit+q, j'ai mis quit_properly
 
 font literationMonoNerdFont-Regular
-size 9 et 9 pour demenu et en gÃ©nÃ©ral dans le config.h de dwm
+size 9 et 9 pour demenu et en gÃƒÂ©nÃƒÂ©ral dans le config.h de dwm
 size 15 pour st
 regler les dpi a 100 (dans .Xresources)
 
@@ -56,7 +56,7 @@ fc-cache -fv
 fc-cache -fv
 
 sudo pacman -S ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-mono noto-fonts noto-fonts-emoji
-+ télécharger roboto et d'autrs nerd fonts
++ tÃ©lÃ©charger roboto et d'autrs nerd fonts
 
 modif /etc/ly/config.ini
 > x_cmd = /usr/bin/X
@@ -104,34 +104,38 @@ Errors from xkbcomp are not fatal to the X server
 
 
 
-il fallait commenter les lignes associées aux différentes touches XF86.. dans le 
+il fallait commenter les lignes associÃ©es aux diffÃ©rentes touches XF86.. dans le 
 fichier:
 /usr/share/X11/xkb/symbols/inet
 
 
 voici ce qu'il y a dans le dossier /etc/X11/xorg.conf.d:
 > cat 00-keyboard.conf
-# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
-# probably wise not to edit this file manually. Use localectl(1) to
-# update this file.
-
-# DEFAULT (sans mon fichier custom fr_min (que les XF86 que j'ai besoin))
 Section "InputClass"
-        Identifier "system-keyboard"
-        MatchIsKeyboard "on"
-        Option "XkbLayout" "fr"
-        Option "XkbOptions" "caps:escape"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "fr"
+    Option "XkbOptions" "caps:escape"
+    Option "RepeatDelay" "250"
+    Option "RepeatRate" "50"
 EndSection
 
 > cat 01-touchpad.conf
 Section "InputClass"
-    Identifier "Touchpad principal"
-    MatchProduct "ELAN2204:00 04F3:3109 Touchpad"
+    Identifier "ELAN Touchpad"
+    MatchDriver "libinput"
+    MatchProduct "ELAN2204"
     MatchIsTouchpad "on"
+
+# Options de base
     Option "Tapping" "on"
+    Option "TappingDrag" "on"
     Option "DisableWhileTyping" "on"
     Option "NaturalScrolling" "on"
+
+# SensibilitÃ© et scrolling
     Option "ScrollingPixelDistance" "30"
+
 EndSection
 
 > cat 90-libinput.conf
@@ -152,9 +156,9 @@ EndSection
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Forcer le chargement précoce des modules nécessaires :
+Forcer le chargement prÃ©coce des modules nÃ©cessaires :
 
-    Éditez le fichier /etc/mkinitcpio.conf :
+    Ã‰ditez le fichier /etc/mkinitcpio.conf :
     bash
 
 sudo nano /etc/mkinitcpio.conf
@@ -164,14 +168,14 @@ text
 
 MODULES=(i2c_hid hid_multitouch)
 
-Régénérez l'initramfs :
+RÃ©gÃ©nÃ©rez l'initramfs :
 bash
 
 sudo mkinitcpio -P
 
-Ajouter un délai d'attente pour le périphérique I2C (si nécessaire) :
+Ajouter un dÃ©lai d'attente pour le pÃ©riphÃ©rique I2C (si nÃ©cessaire) :
 
-    Créez un fichier de service systemd :
+    CrÃ©ez un fichier de service systemd :
     bash
 
 sudo nano /etc/systemd/system/i2c-wait.service
@@ -195,11 +199,27 @@ bash
 
 sudo systemctl enable i2c-wait.service
 
-Vérifier les paramètres du noyau :
+VÃ©rifier les paramÃ¨tres du noyau :
 
-    Ajoutez i2c-hid.acpi_sleep=3 aux paramètres du noyau dans le gestionnaire de boot (GRUB ou systemd-boot) pour gérer les problèmes de veille ACPI.
+    Ajoutez i2c-hid.acpi_sleep=3 aux paramÃ¨tres du noyau dans le gestionnaire de boot (GRUB ou systemd-boot) pour gÃ©rer les problÃ¨mes de veille ACPI.
 
-Redémarrer :
+RedÃ©marrer :
 bash
 
 reboot
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dans /etc/udev/rules.d
+
+
+ó°£‡  for î‚° /etc/udev/rules.d î‚° ls
+.rw-r--r-- 109 root 11 Aug 21:15 ï…› 51-gcadapter.rules
+.rw-r--r-- 136 root 27 Aug  2024 ï…› 99-backlight.rules
+
+ó°£‡  for î‚° /etc/udev/rules.d î‚° cat 51-gcadapter.rules
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", MODE="0666"
+
+ó°£‡  for î‚° /etc/udev/rules.d î‚° cat 99-backlight.rules
+#KERNEL=="amdgpu_bl1/brightness", MODE="0666"
+SUBSYSTEM=="backlight",RUN+="/bin/chmod 0666 /sys/class/backlight/amdgpu_bl1/brightness"
