@@ -114,10 +114,10 @@ voici ce qu'il y a dans le dossier /etc/X11/xorg.conf.d:
 Section "InputClass"
     Identifier "system-keyboard"
     MatchIsKeyboard "on"
+    MatchDevicePath "/dev/input/event*"
     Option "XkbLayout" "fr"
     Option "XkbOptions" "caps:escape"
-    Option "RepeatDelay" "250"
-    Option "RepeatRate" "50"
+    Option "AutoRepeat" "250 20" # bug de linux mais AutoRepeat 250 30 correspond à xset r rate 250 50
 EndSection
 
 > cat 01-touchpad.conf
