@@ -223,3 +223,15 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idP
 󰣇  for  /etc/udev/rules.d  cat 99-backlight.rules
 #KERNEL=="amdgpu_bl1/brightness", MODE="0666"
 SUBSYSTEM=="backlight",RUN+="/bin/chmod 0666 /sys/class/backlight/amdgpu_bl1/brightness"
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+pour cancel toutes les erreurs de xkbcomp après avoir quitté dwm, il faut modifier 
+/usr/share/X11/xkb/symbols/inet, en commantant toutes les lignes où il y a eu un warning:
+- si après fermeture de dwm il y a: Warning: Could not resolve keysym XF86RefreshRateToggle
+
+alors commenter la ligne: 
+//   key <I570>   {       [ XF86RefreshRateToggle          ]      }; // KEY_REFRESH_RATE_TOGGLE
+
