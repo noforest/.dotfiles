@@ -1003,10 +1003,17 @@ require("lazy").setup({
             vim.g.maplocalleader = "ù"
             vim.g.vimtex_quickfix_mode = 0 -- enlève la fenêtre de warning à chaque compilation
 
+            -- ajouter pour gagner nettement de la performance
+            vim.g.vimtex_complete_enabled = 0
+            vim.g.vimtex_syntax_enabled = 1
+            vim.g.vimtex_syntax_conceal_disable = 1
+            vim.g.vimtex_indent_enabled = 0
+
             -- --- Compilateur par défaut : PdfLaTeX ---
             vim.g.vimtex_compiler_method = "latexmk"
             vim.g.vimtex_compiler_latexmk = {
-                build_dir = '',
+                aux_dir = '_latex_aux',
+                out_dir = '_latex_output',
                 callback = 1,
                 continuous = 1,
                 executable = 'latexmk',
@@ -1016,38 +1023,6 @@ require("lazy").setup({
                     '-synctex=1',
                 },
             }
-
-            -- --- Raccourci pour basculer vers XeLaTeX ---
-            vim.keymap.set("n", "<localleader>x", function()
-                vim.g.vimtex_compiler_latexmk = {
-                    build_dir = '',
-                    callback = 1,
-                    continuous = 1,
-                    executable = 'latexmk',
-                    options = {
-                        '-xelatex',
-                        '-interaction=nonstopmode',
-                        '-synctex=1',
-                    },
-                }
-                print("VimTeX : compilation avec XeLaTeX activée")
-            end, { desc = "Basculer vers XeLaTeX pour VimTeX" })
-
-            -- --- Raccourci pour revenir à PdfLaTeX ---
-            vim.keymap.set("n", "<localleader>p", function()
-                vim.g.vimtex_compiler_latexmk = {
-                    build_dir = '',
-                    callback = 1,
-                    continuous = 1,
-                    executable = 'latexmk',
-                    options = {
-                        '-pdf',
-                        '-interaction=nonstopmode',
-                        '-synctex=1',
-                    },
-                }
-                print("VimTeX : compilation avec PdfLaTeX activée")
-            end, { desc = "Basculer vers PdfLaTeX pour VimTeX" })
         end
     },
     {
@@ -2311,286 +2286,105 @@ require("lazy").setup({
     },
 
     {
-        {
-            'VonHeikemen/lsp-zero.nvim',
-            branch = 'v3.x',
-            lazy = true,
-            config = false,
-            init = function()
-                -- Disable automatic setup, we are doing it manually
-                vim.g.lsp_zero_extend_cmp = 0
-                vim.g.lsp_zero_extend_lspconfig = 0
-            end,
-        },
-        {
-            'williamboman/mason.nvim',
-            lazy = false,
-            config = true,
-        },
-        {
-            "xzbdmw/colorful-menu.nvim",
-            config = function()
-                -- You don't need to set these options.
-                require("colorful-menu").setup({
-                    ls = {
-                        lua_ls = {
-                            -- Maybe you want to dim arguments a bit.
-                            arguments_hl = "@comment",
-                        },
-                        gopls = {
-                            -- By default, we render variable/function's type in the right most side,
-                            -- to make them not to crowd together with the original label.
-
-                            -- when true:
-                            -- foo             *Foo
-                            -- ast         "go/ast"
-
-                            -- when false:
-                            -- foo *Foo
-                            -- ast "go/ast"
-                            align_type_to_right = true,
-                            -- When true, label for field and variable will format like "foo: Foo"
-                            -- instead of go's original syntax "foo Foo". If align_type_to_right is
-                            -- true, this option has no effect.
-                            add_colon_before_type = false,
-                            -- See https://github.com/xzbdmw/colorful-menu.nvim/pull/36
-                            preserve_type_when_truncate = true,
-                        },
-                        -- for lsp_config or typescript-tools
-                        ts_ls = {
-                            -- false means do not include any extra info,
-                            -- see https://github.com/xzbdmw/colorful-menu.nvim/issues/42
-                            extra_info_hl = "@comment",
-                        },
-                        vtsls = {
-                            -- false means do not include any extra info,
-                            -- see https://github.com/xzbdmw/colorful-menu.nvim/issues/42
-                            extra_info_hl = "@comment",
-                        },
-                        ["rust-analyzer"] = {
-                            -- Such as (as Iterator), (use std::io).
-                            extra_info_hl = "@comment",
-                            -- Similar to the same setting of gopls.
-                            align_type_to_right = true,
-                            -- See https://github.com/xzbdmw/colorful-menu.nvim/pull/36
-                            preserve_type_when_truncate = true,
-                        },
-                        clangd = {
-                            -- Such as "From <stdio.h>".
-                            extra_info_hl = "@comment",
-                            -- Similar to the same setting of gopls.
-                            align_type_to_right = true,
-                            -- the hl group of leading dot of "•std::filesystem::permissions(..)"
-                            import_dot_hl = "@comment",
-                            -- See https://github.com/xzbdmw/colorful-menu.nvim/pull/36
-                            preserve_type_when_truncate = true,
-                        },
-                        zls = {
-                            -- Similar to the same setting of gopls.
-                            align_type_to_right = true,
-                        },
-                        roslyn = {
-                            extra_info_hl = "@comment",
-                        },
-                        dartls = {
-                            extra_info_hl = "@comment",
-                        },
-                        -- The same applies to pyright/pylance
-                        basedpyright = {
-                            -- It is usually import path such as "os"
-                            extra_info_hl = "@comment",
-                        },
-                        -- If true, try to highlight "not supported" languages.
-                        fallback = true,
-                        -- this will be applied to label description for unsupport languages
-                        fallback_extra_info_hl = "@comment",
+        'williamboman/mason.nvim',
+        lazy = false,
+        config = true,
+    },
+    {
+        "xzbdmw/colorful-menu.nvim",
+        config = function()
+            -- You don't need to set these options.
+            require("colorful-menu").setup({
+                ls = {
+                    lua_ls = {
+                        -- Maybe you want to dim arguments a bit.
+                        arguments_hl = "@comment",
                     },
-                    -- If the built-in logic fails to find a suitable highlight group for a label,
-                    -- this highlight is applied to the label.
-                    fallback_highlight = "@variable",
-                    -- If provided, the plugin truncates the final displayed text to
-                    -- this width (measured in display cells). Any highlights that extend
-                    -- beyond the truncation point are ignored. When set to a float
-                    -- between 0 and 1, it'll be treated as percentage of the width of
-                    -- the window: math.floor(max_width * vim.api.nvim_win_get_width(0))
-                    -- Default 60.
-                    max_width = 60,
-                })
-            end,
-        },
+                    gopls = {
+                        -- By default, we render variable/function's type in the right most side,
+                        -- to make them not to crowd together with the original label.
+
+                        -- when true:
+                        -- foo             *Foo
+                        -- ast         "go/ast"
+
+                        -- when false:
+                        -- foo *Foo
+                        -- ast "go/ast"
+                        align_type_to_right = true,
+                        -- When true, label for field and variable will format like "foo: Foo"
+                        -- instead of go's original syntax "foo Foo". If align_type_to_right is
+                        -- true, this option has no effect.
+                        add_colon_before_type = false,
+                        -- See https://github.com/xzbdmw/colorful-menu.nvim/pull/36
+                        preserve_type_when_truncate = true,
+                    },
+                    -- for lsp_config or typescript-tools
+                    ts_ls = {
+                        -- false means do not include any extra info,
+                        -- see https://github.com/xzbdmw/colorful-menu.nvim/issues/42
+                        extra_info_hl = "@comment",
+                    },
+                    vtsls = {
+                        -- false means do not include any extra info,
+                        -- see https://github.com/xzbdmw/colorful-menu.nvim/issues/42
+                        extra_info_hl = "@comment",
+                    },
+                    ["rust-analyzer"] = {
+                        -- Such as (as Iterator), (use std::io).
+                        extra_info_hl = "@comment",
+                        -- Similar to the same setting of gopls.
+                        align_type_to_right = true,
+                        -- See https://github.com/xzbdmw/colorful-menu.nvim/pull/36
+                        preserve_type_when_truncate = true,
+                    },
+                    clangd = {
+                        -- Such as "From <stdio.h>".
+                        extra_info_hl = "@comment",
+                        -- Similar to the same setting of gopls.
+                        align_type_to_right = true,
+                        -- the hl group of leading dot of "•std::filesystem::permissions(..)"
+                        import_dot_hl = "@comment",
+                        -- See https://github.com/xzbdmw/colorful-menu.nvim/pull/36
+                        preserve_type_when_truncate = true,
+                    },
+                    zls = {
+                        -- Similar to the same setting of gopls.
+                        align_type_to_right = true,
+                    },
+                    roslyn = {
+                        extra_info_hl = "@comment",
+                    },
+                    dartls = {
+                        extra_info_hl = "@comment",
+                    },
+                    -- The same applies to pyright/pylance
+                    basedpyright = {
+                        -- It is usually import path such as "os"
+                        extra_info_hl = "@comment",
+                    },
+                    -- If true, try to highlight "not supported" languages.
+                    fallback = true,
+                    -- this will be applied to label description for unsupport languages
+                    fallback_extra_info_hl = "@comment",
+                },
+                -- If the built-in logic fails to find a suitable highlight group for a label,
+                -- this highlight is applied to the label.
+                fallback_highlight = "@variable",
+                -- If provided, the plugin truncates the final displayed text to
+                -- this width (measured in display cells). Any highlights that extend
+                -- beyond the truncation point are ignored. When set to a float
+                -- between 0 and 1, it'll be treated as percentage of the width of
+                -- the window: math.floor(max_width * vim.api.nvim_win_get_width(0))
+                -- Default 60.
+                max_width = 60,
+            })
+        end,
+    },
 
 
-        -- Autocompletion
-        -- {
-        --   'hrsh7th/nvim-cmp',
-        --   event = 'InsertEnter',
-        --   dependencies = {
-        --     -- {"afonsocarlos/cmp-nvim-lsp-signature-help"},
-        --     -- {
-        --     --     "edte/cmp-nvim-lsp-signature-help",
-        --     --     event = "InsertEnter"
-        --     -- },
-        --     {
-        --       'ray-x/lsp_signature.nvim',
-        --       event = 'InsertEnter',
-        --       config = function()
-        --
-        --         require('lsp_signature').setup({
-        --           bind = true, -- Cela permet de lier directement l'affichage des signatures
-        --           floating_window = true, -- Active une fenêtre flottante pour afficher les signatures
-        --           hint_enable = false, -- Désactive les suggestions dans la ligne (pour une interface plus propre)
-        --           doc_lines = 0,
-        --           floating_window_above_cur_line = true,
-        --           max_width = 150, -- Limite la largeur de la signature affichée
-        --           max_height = 3, -- Limite la hauteur de la fenêtre flottante
-        --           -- floating_window_off_y = 4,
-        --
-        --           floating_window_off_x = 5, -- adjust float windows x position.
-        --           floating_window_off_y = function() -- adjust float windows y position. e.g. set to -2 can make floating window move up 2 lines
-        --               local linenr = vim.api.nvim_win_get_cursor(0)[1] -- buf line number
-        --               local pumheight = vim.o.pumheight
-        --               local winline = vim.fn.winline() -- line number in the window
-        --               local winheight = vim.fn.winheight(0)
-        --
-        --               -- window top
-        --               if winline - 1 < pumheight then
-        --                   return pumheight
-        --               end
-        --
-        --               -- window bottom
-        --               if winheight - winline < pumheight then
-        --                   return -pumheight
-        --               end
-        --               return 0
-        --           end,
-        --         })
-        --
-        --
-        --         vim.api.nvim_create_autocmd("CursorMoved", {
-        --           pattern = "*", -- S'applique à tous les fichiers
-        --
-        --           callback = function()
-        --             local filetype = vim.bo.filetype
-        --
-        --             -- Désactiver le comportement pour les fichiers .tex et .txt et autres
-        --             if filetype == "tex" or filetype == "txt" or filetype == "python" or filetype == "javascript" or filetype == "typescript" then
-        --                 return
-        --             end
-        --
-        --             -- Vérifier si nous sommes en mode insertion
-        --             if vim.fn.mode() ~= "i" then
-        --               return
-        --             end
-        --
-        --             local line = vim.api.nvim_get_current_line()
-        --             local col = vim.api.nvim_win_get_cursor(0)[2]
-        --             local char_under_cursor = line:sub(col + 1, col + 1)
-        --
-        --             -- Ferme si le curseur sort des parenthèses
-        --             if char_under_cursor ~= "(" and char_under_cursor ~= "," then
-        --               require('lsp_signature').toggle_float_win(false) -- Ferme la fenêtre
-        --             end
-        --           end,
-        --         })
-        --
-        --       end,
-        --     },
-        --
-        --     -- {
-        --     --   -- snippet plugin
-        --     --   "L3MON4D3/LuaSnip",
-        --     --   -- dependencies = "rafamadriz/friendly-snippets",
-        --     --   -- config = function()
-        --     --   --   local luasnip = require("luasnip")
-        --     --   --   require("luasnip.loaders.from_vscode").lazy_load { exclude = vim.g.vscode_snippets_exclude or {} }
-        --     --   --   require("luasnip.loaders.from_vscode").lazy_load { paths = vim.g.vscode_snippets_path or "" }
-        --     --   --
-        --     --   --   -- snipmate format
-        --     --   --   require("luasnip.loaders.from_snipmate").load()
-        --     --   --   require("luasnip.loaders.from_snipmate").lazy_load { paths = vim.g.snipmate_snippets_path or "" }
-        --     --   --
-        --     --   --   -- lua format
-        --     --   --   require("luasnip.loaders.from_lua").load()
-        --     --   --   require("luasnip.loaders.from_lua").lazy_load { paths = vim.g.lua_snippets_path or "" }
-        --     --   --
-        --     --   --   vim.api.nvim_create_autocmd("InsertLeave", {
-        --     --   --     callback = function()
-        --     --   --       if
-        --     --   --         require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-        --     --   --         and not require("luasnip").session.jump_active
-        --     --   --         then
-        --     --   --           require("luasnip").unlink_current()
-        --     --   --         end
-        --     --   --       end,
-        --     --   --     })
-        --     --   -- end,
-        --     -- },
-        --     {
-        --       "windwp/nvim-autopairs",
-        --       opts = {
-        --         fast_wrap = {},
-        --         disable_filetype = { "TelescopePrompt", "vim" },
-        --       },
-        --       config = function(_, opts)
-        --         require("nvim-autopairs").setup(opts)
-        --
-        --         -- setup cmp for autopairs
-        --         local cmp_autopairs = require "nvim-autopairs.completion.cmp"
-        --         require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-        --       end,
-        --     },
-        --   },
-        --   config = function()
-        --     local lsp_zero = require('lsp-zero')
-        --     lsp_zero.extend_cmp()
-        --
-        --     local cmp = require('cmp')
-        --     local cmp_action = lsp_zero.cmp_action()
-        --
-        --     cmp.setup({
-        --       -- formatting = lsp_zero.cmp_format({ details = true }),
-        --
-        --       formatting = {
-        --         format = function(entry, vim_item)
-        --           -- Add the signature details next to the completion item
-        --           vim_item.menu = entry.completion_item.detail or ""
-        --           return vim_item
-        --         end,
-        --       },
-        --       preselect = cmp.PreselectMode.None,
-        --       mapping = cmp.mapping.preset.insert({
-        --         ['<C-Space>'] = cmp.mapping.complete(),
-        --         ['<C-n>'] = cmp.mapping.select_next_item(), -- Navigue vers l'élément suivant
-        --         ['<C-p>'] = cmp.mapping.select_prev_item(), -- Navigue vers l'élément précédent
-        --         ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-        --         ['<C-d>'] = cmp.mapping.scroll_docs(4),
-        --         ['<C-f>'] = cmp_action.luasnip_jump_forward(),
-        --         ['<C-b>'] = cmp_action.luasnip_jump_backward(),
-        --         ['<Tab>'] = cmp.mapping.confirm {
-        --           behavior = cmp.ConfirmBehavior.Replace,
-        --           select = true,
-        --         },
-        --       }),
-        --       sources = {
-        --
-        --         -- { name = 'nvim_lsp_signature_help' },
-        --         { name = 'nvim_lsp', max_item_count = 10 },                                         -- Limiter les suggestions LSP à 5
-        --         -- { name = 'luasnip',  options = { show_autosnippets = true }, max_item_count = 10 }, -- Limiter les suggestions LSP à 5
-        --         { name = 'buffer',   max_item_count = 10 },                                         -- Limiter les suggestions du buffer à 5
-        --         { name = 'path',     max_item_count = 10 },                                         -- Limiter les suggestions de chemin à 5
-        --       },
-        --
-        --       snippet = {
-        --         expand = function(args)
-        --           require('luasnip').lsp_expand(args.body)
-        --         end,
-        --       },
-        --     })
-        --   end
-        -- },
 
-
-        {
+    {
             "saghen/blink.cmp",
             -- build = 'cargo build --release',
             enabled = true, --------------------------------------------------------------------------------------------------------------------------------
@@ -2728,6 +2522,7 @@ require("lazy").setup({
                     completion = {
                         trigger = {
                             -- Ne pas bloquer le caractère "/" comme déclencheur
+
                             show_on_blocked_trigger_characters = {},
                             show_on_x_blocked_trigger_characters = {},
                         },
@@ -2757,6 +2552,10 @@ require("lazy").setup({
 
 
                 opts.completion = {
+
+                    trigger = {
+                        show_on_trigger_character = true,
+                    },
 
                     accept = {
                         auto_brackets = {
@@ -2847,8 +2646,11 @@ require("lazy").setup({
                         selection = {
                             preselect = true,
                             auto_insert = true,
-                        }
+                        },
+
+
                     },
+
 
                     documentation = {
                         auto_show = false,
@@ -2891,146 +2693,98 @@ require("lazy").setup({
             end,
         },
 
-        -- LSP
+
+
+
+
+
+
+        -- REFONTE DE MA CONFIG LSP
+
         {
             'neovim/nvim-lspconfig',
-            cmd = { 'LspInfo', 'LspInstall', 'LspStart' },
-            event = { 'BufReadPre', 'BufNewFile', 'VimEnter' },
             dependencies = {
-                { 'hrsh7th/cmp-nvim-lsp' },
-                { 'williamboman/mason-lspconfig.nvim' },
-                { 'ray-x/lsp_signature.nvim' },
+                'williamboman/mason.nvim',
+                'williamboman/mason-lspconfig.nvim',
+                'saghen/blink.cmp',
+                'ray-x/lsp_signature.nvim',
             },
-            enabled = true,
+            event = { 'BufReadPre', 'BufNewFile', 'VimEnter' },
 
-            config = function()
-                local lsp_zero = require('lsp-zero')
-                lsp_zero.extend_lspconfig()
+            opts = {
+                servers = {
+                    lua_ls = {
+                        settings = {
+                            Lua = {
+                                workspace = { checkThirdParty = false },
+                                telemetry = { enable = false },
+                            },
+                        },
+                    },
 
-                -- -- ---------------------------------------------------------------------------------
-                -- capabilities.textDocument.completion.completionItem.snippetSupport = true -- IMPORTANT (false désactive tous les snippets)
-                -- ---------------------------------------------------------------------------------
+                    clangd = {
+                        cmd = { "clangd", "--background-index" },
+                        filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+                        root_dir = vim.fs.dirname(vim.fs.find({
+                            'compile_commands.json', '.clangd', '.git'
+                        }, { upward = true })[1]),
+                    },
 
-                local ft = vim.bo.filetype
-                local caps = vim.lsp.protocol.make_client_capabilities()
-                -- caps.offsetEncoding = { "utf-16" }
-                caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
+                    texlab = {
+                        filetypes = { "tex", "bib" },
+                    },
+                },
+            },
 
-                lsp_zero.on_attach(function(client, bufnr)
-                    lsp_zero.default_keymaps({ buffer = bufnr })
-                    local opts = { noremap = true, silent = true }
-                    vim.keymap.set('n', '<leader>gh', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-                    vim.keymap.set('n', '<leader>gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-                    -- vim.keymap.set('n', '<leader>gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-                    vim.keymap.set("n", "<leader>gl", ":Trouble lsp toggle focus=true<cr>", { silent = true })
-                    -- vim.keymap.set("n", "<leader>gr", ":Trouble lsp_references toggle focus=true<cr>", {silent = true})
-                    -- vim.keymap.set("n", "<leader>gr", ":Trouble lsp_references toggle focus=true win.type=float<cr>", {silent = true})
-                    vim.keymap.set("n", "<leader>gr", ":Telescope lsp_references<cr>")
-                end)
+            config = function(_, opts)
+                local signature = require('lsp_signature')
+                local capabilities_base = require('blink.cmp').get_lsp_capabilities()
 
+                -- 🔹 Fonction utilitaire : capabilities dynamiques selon le type de fichier
+                local function get_capabilities_for_server(server_name)
+                    local enable_snippets = (server_name == "texlab")
+                    return require('blink.cmp').get_lsp_capabilities({
+                        textDocument = {
+                            completion = { completionItem = { snippetSupport = enable_snippets } },
+                        },
+                    })
+                end
 
-                -- require('mason-lspconfig').setup({
-                --     ensure_installed = {},
-                --     handlers = {
-                --         function(server_name)
-                --             require('lspconfig')[server_name].setup({
-                --                 capabilities = capabilities,
-                --             })
-                --         end,
-                --
-                --
-                --
-                --         clangd = function()
-                --             local ft = vim.bo.filetype
-                --             local caps = vim.lsp.protocol.make_client_capabilities()
-                --             caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
-                --
-                --             require('lspconfig').clangd.setup({
-                --                 capabilities = caps,
-                --                 -- cmd = { "clangd", "--background-index" },
-                --                 filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-                --                 root_dir = require('lspconfig.util').root_pattern('compile_commands.json', '.clangd',
-                --                     '.git'),
-                --             })
-                --         end,
-                --
-                --         lua_ls = function()
-                --             local ft = vim.bo.filetype
-                --             local caps = vim.lsp.protocol.make_client_capabilities()
-                --             caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
-                --
-                --             local lua_opts = lsp_zero.nvim_lua_ls()
-                --             require('lspconfig').lua_ls.setup(vim.tbl_deep_extend("force", lua_opts, {
-                --                 capabilities = caps,
-                --             }))
-                --         end,
-                --
-                --
-                --         -- pyright = function()
-                --         --   require('lspconfig').pyright.setup({
-                --         --     capabilities = capabilities,
-                --         --     on_attach = function(_, bufnr) -- '_' signifie que le client est ignoré
-                --         --       -- Set indentation to 2 spaces for Python
-                --         --       require('lsp_signature').toggle_float_win(false)
-                --         --       vim.bo[bufnr].tabstop = 4
-                --         --       vim.bo[bufnr].shiftwidth = 4
-                --         --       vim.bo[bufnr].expandtab = true
-                --         --       vim.bo[bufnr].autoindent = true
-                --         --       vim.bo[bufnr].smartindent = true
-                --         --     end,
-                --         --   })
-                --         -- end,
-                --
-                --
-                --     }
-                -- })
+                -- 🔹 on_attach commun
+                local function on_attach(client, bufnr)
+                    local opts = { noremap = true, silent = true, buffer = bufnr }
 
+                    vim.keymap.set('n', '<leader>gh', vim.lsp.buf.hover, opts)
+                    vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition, opts)
+                    vim.keymap.set('n', '<leader>gr', '<cmd>Telescope lsp_references<cr>', opts)
+                    vim.keymap.set('n', '<leader>gl', '<cmd>Trouble lsp toggle focus=true<cr>', opts)
+
+                    signature.on_attach({
+                        bind = true,
+                        handler_opts = { border = "rounded" },
+                        floating_window = false,
+                        hint_enable = false,
+                    }, bufnr)
+                end
+
+                -- 🔹 Setup Mason
+                require('mason').setup()
                 require('mason-lspconfig').setup({
-                    ensure_installed = {},
-                    handlers = {
-
-                        function(server_name)
-
-                            require('lspconfig')[server_name].setup({
-                                capabilities = capabilities,
-                            })
-
-                        end,
-
-                        -- pour jdtls, commenter les dernières lignes dans le fichier plugin/options.lua, pour reprendre la complétion
-
-                        clangd = function()
-                            local ft = vim.bo.filetype
-                            local caps = vim.lsp.protocol.make_client_capabilities()
-                            caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
-
-                            require('lspconfig').clangd.setup({
-                                capabilities = caps,
-                                filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-                                root_dir = require('lspconfig.util').root_pattern(
-                                    'compile_commands.json', 
-                                    '.clangd',
-                                    '.git'
-                                ),
-                            })
-                        end,
-
-                        lua_ls = function()
-                            local ft = vim.bo.filetype
-                            local caps = vim.lsp.protocol.make_client_capabilities()
-                            caps.textDocument.completion.completionItem.snippetSupport = (ft == "tex")
-
-                            local lua_opts = lsp_zero.nvim_lua_ls()
-                            require('lspconfig').lua_ls.setup(vim.tbl_deep_extend("force", lua_opts, {
-                                capabilities = caps,
-                            }))
-                        end,
-                    }
+                    ensure_installed = vim.tbl_keys(opts.servers),
+                    automatic_installation = true,
                 })
-            end
+
+                -- 🔹 Configurer chaque serveur via la nouvelle API
+                for name, config in pairs(opts.servers) do
+                    vim.lsp.config[name] = vim.tbl_deep_extend("force", config, {
+                        on_attach = on_attach,
+                        capabilities = get_capabilities_for_server(name),
+                    })
+                end
+
+            end,
         }
 
 
-    }
 
 })

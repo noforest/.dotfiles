@@ -28,6 +28,11 @@ use = "AnirudhG07/custom-shell"
 rev = "b04213d"
 hash = "3efc7ddc9bac120c618462eb994edf75"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:piper"
+rev = "9a52857"
+hash = "a20327710c3a8d37ee0972128dcb6a31"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
 rev = "d04a298"

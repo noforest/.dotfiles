@@ -34,6 +34,11 @@ ueberzug_scale = 1
 ueberzug_offset = [0, 0, 0, 0]
 
 [opener]
+
+pdf = [
+{ run = 'okular "$1"', desc = "Okular (default)", orphan = true, for = "linux" },
+{ run = 'zathura "$1"', desc = "Zathura", orphan = true, for = "linux" },
+]
 edit = [
     # { run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
     { run = 'nvim "$@"', desc = "nvim", block = true, for = "unix" },
@@ -62,6 +67,8 @@ play = [
 
 [open]
 rules = [
+# PDF
+    { mime = "application/pdf", use = ["pdf", "reveal"] },
     # Folder
     { name = "*/", use = ["edit", "open", "reveal"] },
     # Text
@@ -162,6 +169,8 @@ prepend_previewers = [
 { name = "*.xlsx", run = "duckdb" },  
 { name = "*.db", run = "duckdb" },
 { name = "*.duckdb", run = "duckdb" },
+# { name = "*.md", run = "rich-preview"}, # for markdown (.md) files
+# { name = "*.ipynb", run = "rich-preview"}, # for jupyter notebooks (.ipynb)
 
 ]
 

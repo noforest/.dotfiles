@@ -176,7 +176,8 @@ vim.api.nvim_create_autocmd({'DirChanged'}, {
 --             -- Désactive le document formatting si tu veux
 --             client.server_capabilities.documentFormattingProvider = false
 --
---             print("jdtls completions/snippets/signature/hover disabled for this buffer")
+--             -- print("jdtls completions/snippets/signature/hover disabled for this buffer")
 --         end
 --     end,
 -- })
+
