@@ -1029,14 +1029,21 @@ require("lazy").setup({
         "folke/flash.nvim",
         event = "VeryLazy",
         ---@type Flash.Config
-        opts = {},
+        opts = {
+            modes = {
+                char = {
+                    -- keep flash enabled for f/F, but remove t/T
+                    keys = { "f", "F", ";", "," },
+                },
+            },
+        },
         -- stylua: ignore
         keys = {
             -- { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
             -- { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
             -- { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
             -- { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-            { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+            -- { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
         },
     },
 
@@ -2733,6 +2740,22 @@ require("lazy").setup({
                     texlab = {
                         filetypes = { "tex", "bib" },
                     },
+
+                    ts_ls = {
+
+                    },
+
+                    jdtls = {
+                        filetypes = { "java" },
+                        root_dir = vim.fs.dirname(vim.fs.find({
+                            'pom.xml', 'build.gradle', '.git'
+                        }, { upward = true })[1]),
+                        settings = {
+                            java = {
+                                signatureHelp = { enabled = true };
+                            }
+                        }
+                    },
                 },
             },
 
@@ -2740,7 +2763,7 @@ require("lazy").setup({
                 local signature = require('lsp_signature')
                 local capabilities_base = require('blink.cmp').get_lsp_capabilities()
 
-                -- 🔹 Fonction utilitaire : capabilities dynamiques selon le type de fichier
+                --  Fonction utilitaire : capabilities dynamiques selon le type de fichier
                 local function get_capabilities_for_server(server_name)
                     local enable_snippets = (server_name == "texlab")
                     return require('blink.cmp').get_lsp_capabilities({
@@ -2750,7 +2773,7 @@ require("lazy").setup({
                     })
                 end
 
-                -- 🔹 on_attach commun
+                -- on_attach commun
                 local function on_attach(client, bufnr)
                     local opts = { noremap = true, silent = true, buffer = bufnr }
 
@@ -2767,14 +2790,15 @@ require("lazy").setup({
                     }, bufnr)
                 end
 
-                -- 🔹 Setup Mason
+                -- Setup Mason
                 require('mason').setup()
                 require('mason-lspconfig').setup({
                     ensure_installed = vim.tbl_keys(opts.servers),
                     automatic_installation = true,
                 })
 
-                -- 🔹 Configurer chaque serveur via la nouvelle API
+
+                -- Configurer chaque serveur via la nouvelle API
                 for name, config in pairs(opts.servers) do
                     vim.lsp.config[name] = vim.tbl_deep_extend("force", config, {
                         on_attach = on_attach,

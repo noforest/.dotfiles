@@ -18,6 +18,7 @@ export SUDO_EDITOR="nvim"
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8
 export LC_TIME=en_US.UTF-8
+export LESS='-R --mouse --no-init'
 
 
 # Pour colorer eza, tree, etc... (parfait pour la couleur violet)

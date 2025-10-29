@@ -8,7 +8,7 @@ static const Block blocks[] = {
     /*{"",		"vap-bluetooth",	40,			6},*/
     {"",		"vap-internet",		25,			3},
     {"",		"vap-volume",		0,			10},
-    {"",		"vap-clock",		5,			1},
+    {"",		"vap-clock",		1,			1},
     {"",		"powermenu",		0,			13},
     {"",		"ac_adapter.sh",		10,			0},
     {"",		"dualscreen_focus_on_big_one",		5,			0},

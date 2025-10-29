@@ -25,6 +25,10 @@ export MOZ_GTK_TITLEBAR_DECORATION=none
 # setxkbmap -layout fr -option caps:escape &
 ######################
 
+# autre fichiers importants:
+# - /etc/udev/rules.d
+# - /etc/X11/xorg.conf.d
+
 xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Scrolling Pixel Distance" 30 &
 xinput --set-prop "pointer:Logitech K400 Plus" "libinput Natural Scrolling Enabled" 1 &
 libinput-gestures-setup restart &
