@@ -43,4 +43,3 @@ vim.api.nvim_set_hl(0, "MyPurple", {
     -- strikethrough = false -- Pas de barré
 })
 
-

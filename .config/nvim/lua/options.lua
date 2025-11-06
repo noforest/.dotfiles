@@ -170,4 +170,3 @@ if exists('$TMUX')
     endif
     ]])
 
-

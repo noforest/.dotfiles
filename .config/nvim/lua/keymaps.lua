@@ -10,6 +10,9 @@ vim.keymap.set("n", "<leader>b", ":bp<cr>", { silent = true })
 vim.keymap.set("n", ",", ":BufferLineCyclePrev<cr>", { silent = true })
 vim.keymap.set("n", ";", ":BufferLineCycleNext<cr>", { silent = true })
 
+vim.keymap.set("n", "<Tab>", ":BufferLineCycleNext<cr>", { silent = true })
+vim.keymap.set("n", "<S-Tab>", ":BufferLineCyclePrev<cr>", { silent = true })
+
 -- vim.keymap.set("n", "<C-,>", ":BufferLineCyclePrev<CR>", { silent = true })
 -- vim.keymap.set("n", "<C-;>", ":BufferLineCycleNext<CR>", { silent = true })
 
@@ -129,13 +132,14 @@ vim.api.nvim_set_keymap('x', 'gyb', 'ygvgb', { silent = true })
 -- vim.api.nvim_set_keymap('n', '<Right>', 'l', { noremap = true, silent = true })
 
 vim.api.nvim_set_keymap(
-  'n',                                                   -- mode 'i' pour 'insert mode'
-  '<leader>m',                                           -- le raccourci, ici Leader + m
-  'iint main(int argc, char *argv[]) {\n\nreturn 0;\n}', -- le texte à insérer
+  'n',
+  '<leader>m',
+  'iint main(int argc, char *argv[]) {\n\nreturn 0;\n}<Esc>', -- le texte à insérer
   { noremap = true, silent = true }
 )
 
 
+vim.keymap.set('n', '<leader>;', 'A;<Esc>', { noremap = true, silent = true })
 
 -- Remap for moving lines up and down in normal mode
 vim.keymap.set('n', 'K', ':m .-2<CR>==', { noremap = true, silent = true })
@@ -164,8 +168,11 @@ vim.keymap.set('i', '<S-Left>', '<Nop>')
 vim.keymap.set('i', '<S-Right>', '<Nop>')
 
 
-vim.keymap.set('n', 's', '<Nop>', { noremap = true, silent = true })
-vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
+-- vim.keymap.set('n', 's', '<Nop>', { noremap = true, silent = true })
+-- vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
+
+vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", ">", ">gv")
 
 function _G.set_terminal_keymaps()
     local opts = {buffer = 0}
@@ -242,4 +249,28 @@ vim.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {e
 vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<C-n>"', {expr = true, noremap = true})
 vim.api.nvim_set_keymap('i', '<C-p>', 'pumvisible() ? "\\<C-p>" : "\\<C-p>"', {expr = true, noremap = true})
 
+-- System to keep history of closed buffers
+local closed_buffers = {}
 
+vim.api.nvim_create_autocmd("BufDelete", {
+    callback = function(args)
+        local buf = args.buf
+        local name = vim.api.nvim_buf_get_name(buf)
+        if name ~= "" then
+            table.insert(closed_buffers, 1, name)
+            -- Keep only the last 10
+            if #closed_buffers > 10 then
+                table.remove(closed_buffers)
+            end
+        end
+    end,
+})
+
+vim.keymap.set('n', '<leader>t', function()
+    if #closed_buffers > 0 then
+        local file = table.remove(closed_buffers, 1)
+        vim.cmd('edit ' .. vim.fn.fnameescape(file))
+    else
+        print("No closed buffer to restore")
+    end
+end, { desc = "Reopen last closed buffer" })

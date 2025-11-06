@@ -774,6 +774,263 @@ require("lazy").setup({
     },
 
     {
+        "nvim-neo-tree/neo-tree.nvim",
+        branch = "v3.x",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            "nvim-tree/nvim-web-devicons",
+        },
+        lazy = false,
+
+        config = function()
+            -- attention, c'est moi qui est modifié à la main le code source pour pouvoir rajouter la ligne ["<cr>"] = "open",
+            -- dans le fichier "neo-tree.nvim/lua/neo-tree/sources/filesystem/lib/filter.lua", après la fonction 
+            --     close_clear_filter = function(_state, _scroll_padding)
+            --[[ 
+
+            open = function(state_)
+                local fs_cmds = require("neo-tree.sources.filesystem.commands")
+                local utils = require("neo-tree.utils")
+
+                -- Récupère le buffer actif avant d'ouvrir
+                local bufnr_before = vim.api.nvim_get_current_buf()
+
+                -- Appelle la commande native open de Neo-tree
+                fs_cmds.open(state_)
+
+                -- Récupère le buffer actif après ouverture
+                local bufnr_after = vim.api.nvim_get_current_buf()
+
+                -- Supprime les buffers No Name laissés derrière
+                for _, b in ipairs(vim.api.nvim_list_bufs()) do
+                    if vim.api.nvim_buf_get_name(b) == "" and b ~= bufnr_after then
+                        vim.api.nvim_buf_delete(b, { force = true })
+                    end
+                end
+            end
+
+            ]]
+            require("neo-tree").setup({
+                window = {
+                    position = "left",
+                    width = 40,
+                    mappings = {
+                      ["<space>"] = {
+                        "toggle_node",
+                        nowait = false, -- disable `nowait` if you have existing combos starting with this char that you want to use
+                      },
+                      ["<2-LeftMouse>"] = "open",
+                      ["<cr>"] = "open",
+                      ["<esc>"] = "cancel", -- close preview or floating neo-tree window
+                      ["P"] = {
+                        "toggle_preview",
+                        config = {
+                          use_float = true,
+                          use_snacks_image = true,
+                          use_image_nvim = true,
+                        },
+                      },
+                      -- Read `# Preview Mode` for more information
+                      ["l"] = "focus_preview",
+                      ["S"] = "open_split",
+                      ["s"] = "open_vsplit",
+                      ["t"] = "open_tabnew",
+                      -- ["t"] = "open_tab_drop",
+                      ["w"] = "open_with_window_picker",
+                      --["P"] = "toggle_preview", -- enter preview mode, which shows the current node without focusing
+                      ["C"] = "close_node",
+                      ["<Left>"] = "close_node",
+                      -- ['C'] = 'close_all_subnodes',
+                      ["z"] = "close_all_nodes",
+                      --["Z"] = "expand_all_nodes",
+                      --["Z"] = "expand_all_subnodes",
+
+                      ["A"] = "add_directory", -- also accepts the optional config.show_path option like "add". this also supports BASH style brace expansion.
+                      ["d"] = "delete",
+                      ["r"] = "rename",
+                      ["b"] = "rename_basename",
+                      ["y"] = "copy_to_clipboard",
+                      ["x"] = "cut_to_clipboard",
+                      ["p"] = "paste_from_clipboard",
+                      ["c"] = "copy", -- takes text input for destination, also accepts the optional config.show_path option like "add":
+                      -- ["c"] = {
+                      --  "copy",
+                      --  config = {
+                      --    show_path = "none" -- "none", "relative", "absolute"
+                      --  }
+                      --}
+                      ["m"] = "move", -- takes text input for destination, also accepts the optional config.show_path option like "add".
+                      ["q"] = "close_window",
+                      ["R"] = "refresh",
+                      ["?"] = "show_help",
+                      ["<"] = "prev_source",
+                      [">"] = "next_source",
+                      ["i"] = "show_file_details",
+
+                      ["<Tab>"] = function(state)
+                          local node = state.tree:get_node()
+                          if not node then return end
+
+                          local api = vim.api
+                          local tree_win = api.nvim_get_current_win() -- fenêtre Neo-tree
+                          local main_win
+
+                          -- trouver la première fenêtre qui n'est pas Neo-tree
+                          for _, win in ipairs(api.nvim_list_wins()) do
+                              if win ~= tree_win then
+                                  main_win = win
+                                  break
+                              end
+                          end
+
+                          if node.type == "file" and main_win then
+                              -- ouvrir le fichier dans la fenêtre principale
+                              api.nvim_win_call(main_win, function()
+                                  vim.cmd("silent keepalt edit " .. vim.fn.fnameescape(node.path))
+                              end)
+                          elseif node.type == "directory" then
+                              -- ouvrir le dossier dans Neo-tree normalement
+                              require("neo-tree.sources.filesystem.commands").open(state)
+                          end
+                      end,
+
+                      ["<Right>"] = function(state)
+                          local node = state.tree:get_node()
+                          if not node then return end
+
+                          local api = vim.api
+                          local tree_win = api.nvim_get_current_win() -- fenêtre Neo-tree
+                          local main_win
+
+                          -- trouver la première fenêtre qui n'est pas Neo-tree
+                          for _, win in ipairs(api.nvim_list_wins()) do
+                              if win ~= tree_win then
+                                  main_win = win
+                                  break
+                              end
+                          end
+
+                          if node.type == "file" and main_win then
+                              -- ouvrir le fichier dans la fenêtre principale
+                              api.nvim_win_call(main_win, function()
+                                  vim.cmd("silent keepalt edit " .. vim.fn.fnameescape(node.path))
+                              end)
+                          elseif node.type == "directory" then
+                              -- ouvrir le dossier dans Neo-tree normalement
+                              require("neo-tree.sources.filesystem.commands").open(state)
+                          end
+                      end
+                    },
+                  },
+                  nesting_rules = {},
+                  filesystem = {
+                    filtered_items = {
+                      visible = false, -- when true, they will just be displayed differently than normal items
+                      hide_dotfiles = true,
+                      hide_gitignored = true,
+                      hide_ignored = true, -- hide files that are ignored by other gitignore-like files
+                      -- other gitignore-like files, in descending order of precedence.
+                      ignore_files = {
+                        ".neotreeignore",
+                        ".ignore",
+                        -- ".rgignore"
+                      },
+                      hide_hidden = true, -- only works on Windows for hidden files/directories
+                      hide_by_name = {
+                        --"node_modules"
+                      },
+                      hide_by_pattern = { -- uses glob style patterns
+                        --"*.meta",
+                        --"*/src/*/tsconfig.json",
+                      },
+                      always_show = { -- remains visible even if other settings would normally hide it
+                        --".gitignored",
+                      },
+                      always_show_by_pattern = { -- uses glob style patterns
+                        --".env*",
+                      },
+                      never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
+                        --".DS_Store",
+                        --"thumbs.db"
+                      },
+                      never_show_by_pattern = { -- uses glob style patterns
+                        --".null-ls_*",
+                      },
+                    },
+                    follow_current_file = {
+                      enabled = false, -- This will find and focus the file in the active buffer every time
+                      --               -- the current file is changed while the tree is open.
+                      leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+                    },
+                    group_empty_dirs = false, -- when true, empty folders will be grouped together
+                    hijack_netrw_behavior = "open_default", -- netrw disabled, opening a directory opens neo-tree
+                    -- in whatever position is specified in window.position
+                    -- "open_current",  -- netrw disabled, opening a directory opens within the
+                    -- window like netrw would, regardless of window.position
+                    -- "disabled",    -- netrw left alone, neo-tree does not handle opening dirs
+                    use_libuv_file_watcher = false, -- This will use the OS level file watchers to detect changes
+                    -- instead of relying on nvim autocmd events.
+                    window = {
+                      mappings = {
+                        ["<bs>"] = "navigate_up",
+                        ["."] = "set_root",
+                        ["H"] = "toggle_hidden",
+                        ["/"] = "fuzzy_finder",
+                        ["D"] = "fuzzy_finder_directory",
+                        ["#"] = "fuzzy_sorter", -- fuzzy sorting using the fzy algorithm
+                        -- ["D"] = "fuzzy_sorter_directory",
+                        ["f"] = "filter_on_submit",
+                        ["<c-x>"] = "clear_filter",
+                        ["[g"] = "prev_git_modified",
+                        ["]g"] = "next_git_modified",
+                        ["o"] = {
+                          "show_help",
+                          nowait = false,
+                          config = { title = "Order by", prefix_key = "o" },
+                        },
+                        ["oc"] = { "order_by_created", nowait = false },
+                        ["od"] = { "order_by_diagnostics", nowait = false },
+                        ["og"] = { "order_by_git_status", nowait = false },
+                        ["om"] = { "order_by_modified", nowait = false },
+                        ["on"] = { "order_by_name", nowait = false },
+                        ["os"] = { "order_by_size", nowait = false },
+                        ["ot"] = { "order_by_type", nowait = false },
+                        -- ['<key>'] = function(state) ... end,
+                      },
+                      fuzzy_finder_mappings = { -- define keymaps for filter popup window in fuzzy_finder_mode
+                        ["<cr>"] = "open", --<<<------------------------------------------- COMMANDE PERSO (cf commentaire plus haut)
+                        ["<down>"] = "move_cursor_down",
+                        ["<C-n>"] = "move_cursor_down",
+                        ["<up>"] = "move_cursor_up",
+                        ["<C-p>"] = "move_cursor_up",
+                        ["<esc>"] = "close",
+                        ["<S-CR>"] = "close_keep_filter",
+                        ["<C-CR>"] = "close_clear_filter",
+                        ["<C-w>"] = { "<C-S-w>", raw = true },
+                        {
+                          -- normal mode mappings
+                          n = {
+                            ["j"] = "move_cursor_down",
+                            ["k"] = "move_cursor_up",
+                            ["<S-CR>"] = "close_keep_filter",
+                            ["<C-CR>"] = "close_clear_filter",
+                            ["<esc>"] = "close",
+                          }
+                        }
+                        -- ["<esc>"] = "noop", -- if you want to use normal mode
+                        -- ["key"] = function(state, scroll_padding) ... end,
+                      },
+                    },
+
+                    commands = {}, -- Add a custom command or override a global one using the same function name
+                  },
+
+            })
+        end,
+    },
+
+    {
         "norcalli/nvim-colorizer.lua",
         enable = true,
         config = function()
@@ -798,8 +1055,6 @@ require("lazy").setup({
             },
         },
     },
-
-
 
 
     -- {
@@ -1028,23 +1283,32 @@ require("lazy").setup({
     {
         "folke/flash.nvim",
         event = "VeryLazy",
-        ---@type Flash.Config
         opts = {
+            highlight = {
+                backdrop = false,
+                matches = false,
+            },
             modes = {
                 char = {
-                    -- keep flash enabled for f/F, but remove t/T
+                    highlight = { 
+                        backdrop = false,
+                        matches = false,
+                    },
                     keys = { "f", "F", ";", "," },
                 },
             },
         },
-        -- stylua: ignore
-        keys = {
-            -- { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-            -- { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-            -- { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-            -- { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-            -- { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-        },
+        config = function(_, opts)
+            local flash = require("flash")
+            flash.setup(opts)
+
+            local search_hl = vim.api.nvim_get_hl(0, { name = "Search" })
+
+            vim.api.nvim_set_hl(0, "FlashLabel", { bg = search_hl.bg, fg = "NONE" })
+            vim.api.nvim_set_hl(0, "FlashBackdrop", {})
+            vim.api.nvim_set_hl(0, "FlashMatch", {})
+            vim.api.nvim_set_hl(0, "FlashCurrent", {})
+        end,
     },
 
 
@@ -1376,359 +1640,359 @@ require("lazy").setup({
     --   },
 
 
-    {
-        "echasnovski/mini.files",
-
-        opts = function(_, opts)
-            -- I didn't like the default mappings, so I modified them
-            -- Module mappings created only inside explorer.
-            -- Use `''` (empty string) to not create one.
-            opts.mappings = vim.tbl_deep_extend("force", opts.mappings or {}, {
-                close = "<esc>",
-                -- Use this if you want to open several files
-                go_in = "<Right>",
-                -- This opens the file, but quits out of mini.files (default L)
-                go_in_plus = "<CR>",
-                -- I swapped the following 2 (default go_out: h)
-                -- go_out_plus: when you go out, it shows you only 1 item to the right
-                -- go_out: shows you all the items to the right
-                go_out = "H",
-                go_out_plus = "<Left>",
-                -- Default <BS>
-                reset = "<BS>",
-                -- Default @
-                reveal_cwd = ".",
-                show_help = "g?",
-                -- Default =
-                synchronize = "s",
-                trim_left = "<",
-                trim_right = ">",
-
-                -- Below I created an autocmd with the "," keymap to open the highlighted
-                -- directory in a tmux pane on the right
-            })
-
-            vim.api.nvim_create_autocmd("User", {
-                pattern = "MiniFilesBufferCreate",
-                callback = function(args)
-                    vim.keymap.set("n", "<Tab>", "<Right>", { buffer = args.data.buf_id, remap = true })
-                end,
-            })
-
-            -- Here I define my custom keymaps in a centralized place
-            opts.custom_keymaps = {
-                -- open_tmux_pane = "<M-t>",
-                copy_to_clipboard = "<space>yy",
-                zip_and_copy = "<space>yz",
-                paste_from_clipboard = "<space>p",
-                copy_path = "<M-c>",
-                -- Don't use "i" as it conflicts wit insert mode
-                preview_image = "<C-Right>",
-                -- preview_image_popup = "<M-i>",
-
-            }
-
-            opts.windows = vim.tbl_deep_extend("force", opts.windows or {}, {
-                preview = false,
-                width_focus = 30,
-                width_preview = 80,
-            })
-
-            opts.options = vim.tbl_deep_extend("force", opts.options or {}, {
-                -- Whether to use for editing directories
-                -- Disabled by default in LazyVim because neo-tree is used for that
-                use_as_default_explorer = true,
-                -- If set to false, files are moved to the trash directory
-                -- To get this dir run :echo stdpath('data')
-                -- ~/.local/share/neobean/mini.files/trash
-                permanent_delete = false,
-            })
-
-
-            local nsMiniFiles = vim.api.nvim_create_namespace("mini_files_git")
-            local autocmd = vim.api.nvim_create_autocmd
-            local _, MiniFiles = pcall(require, "mini.files")
-
-            -- Cache for git status
-            local gitStatusCache = {}
-            local cacheTimeout = 2000 -- Cache timeout in milliseconds
-
-            ---@type table<string, {symbol: string, hlGroup: string}>
-            ---@param status string
-            ---@return string symbol, string hlGroup
-            local function mapSymbols(status)
-                local statusMap = {
-                    -- stylua: ignore start
-                    [" M"] = { symbol = "•", hlGroup = "GitSignsChange" }, -- Modified in the working directory
-                    ["M "] = { symbol = "✹", hlGroup = "GitSignsChange" }, -- modified in index
-                    ["MM"] = { symbol = "≠", hlGroup = "GitSignsChange" }, -- modified in both working tree and index
-                    ["A "] = { symbol = "+", hlGroup = "GitSignsAdd" }, -- Added to the staging area, new file
-                    ["AA"] = { symbol = "≈", hlGroup = "GitSignsAdd" }, -- file is added in both working tree and index
-                    ["D "] = { symbol = "-", hlGroup = "GitSignsDelete" }, -- Deleted from the staging area
-                    ["AM"] = { symbol = "⊕", hlGroup = "GitSignsChange" }, -- added in working tree, modified in index
-                    ["AD"] = { symbol = "-•", hlGroup = "GitSignsChange" }, -- Added in the index and deleted in the working directory
-                    ["R "] = { symbol = "→", hlGroup = "GitSignsChange" }, -- Renamed in the index
-                    ["U "] = { symbol = "‖", hlGroup = "GitSignsChange" }, -- Unmerged path
-                    ["UU"] = { symbol = "⇄", hlGroup = "GitSignsAdd" }, -- file is unmerged
-                    ["UA"] = { symbol = "⊕", hlGroup = "GitSignsAdd" }, -- file is unmerged and added in working tree
-                    ["??"] = { symbol = "?", hlGroup = "GitSignsDelete" }, -- Untracked files
-                    ["!!"] = { symbol = "!", hlGroup = "GitSignsChange" }, -- Ignored files
-                    -- stylua: ignore end
-                }
-
-                local result = statusMap[status]
-                    or { symbol = "?", hlGroup = "NonText" }
-                return result.symbol, result.hlGroup
-            end
-
-            ---@param cwd string
-            ---@param callback function
-            ---@return nil
-            local function fetchGitStatus(cwd, callback)
-                local function on_exit(content)
-                    if content.code == 0 then
-                        callback(content.stdout)
-                        vim.g.content = content.stdout
-                    end
-                end
-
-                local cwd = vim.loop.cwd()
-                if not cwd or vim.fn.isdirectory(cwd .. "/.git") == 0 then
-                    print("Not a Git repository: " .. cwd)
-                    return
-                end
-                vim.system(
-                    { "git", "status", "--ignored", "--porcelain" },
-                    { text = true, cwd = cwd },
-                    on_exit
-                )
-            end
-
-            ---@param str string?
-            local function escapePattern(str)
-                return str:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
-            end
-
-            ---@param buf_id integer
-            ---@param gitStatusMap table
-            ---@return nil
-            local function updateMiniWithGit(buf_id, gitStatusMap)
-                vim.schedule(function()
-                    local nlines = vim.api.nvim_buf_line_count(buf_id)
-                    local cwd = vim.fs.root(buf_id, ".git")
-                    local escapedcwd = escapePattern(cwd)
-                    if vim.fn.has("win32") == 1 then
-                        escapedcwd = escapedcwd:gsub("\\", "/")
-                    end
-
-                    for i = 1, nlines do
-                        local entry = MiniFiles.get_fs_entry(buf_id, i)
-                        if not entry then
-                            break
-                        end
-                        local relativePath = entry.path:gsub("^" .. escapedcwd .. "/", "")
-                        local status = gitStatusMap[relativePath]
-
-                        if status then
-                            local symbol, hlGroup = mapSymbols(status)
-                            vim.api.nvim_buf_set_extmark(buf_id, nsMiniFiles, i - 1, 0, {
-                                -- NOTE: if you want the signs on the right uncomment those and comment
-                                -- the 3 lines after
-                                -- virt_text = { { symbol, hlGroup } },
-                                -- virt_text_pos = "right_align",
-                                sign_text = symbol,
-                                sign_hl_group = hlGroup,
-                                priority = 2,
-                            })
-                        else
-                        end
-                    end
-                end)
-            end
-
-
-            -- Thanks for the idea of gettings https://github.com/refractalize/oil-git-status.nvim signs for dirs
-            ---@param content string
-            ---@return table
-            local function parseGitStatus(content)
-                local gitStatusMap = {}
-                -- lua match is faster than vim.split (in my experience )
-                for line in content:gmatch("[^\r\n]+") do
-                    local status, filePath = string.match(line, "^(..)%s+(.*)")
-                    -- Split the file path into parts
-                    local parts = {}
-                    for part in filePath:gmatch("[^/]+") do
-                        table.insert(parts, part)
-                    end
-                    -- Start with the root directory
-                    local currentKey = ""
-                    for i, part in ipairs(parts) do
-                        if i > 1 then
-                            -- Concatenate parts with a separator to create a unique key
-                            currentKey = currentKey .. "/" .. part
-                        else
-                            currentKey = part
-                        end
-                        -- If it's the last part, it's a file, so add it with its status
-                        if i == #parts then
-                            gitStatusMap[currentKey] = status
-                        else
-                            -- If it's not the last part, it's a directory. Check if it exists, if not, add it.
-                            if not gitStatusMap[currentKey] then
-                                gitStatusMap[currentKey] = status
-                            end
-                        end
-                    end
-                end
-                return gitStatusMap
-            end
-
-            ---@param buf_id integer
-            ---@return nil
-            local function updateGitStatus(buf_id)
-                if not vim.fs.root(vim.uv.cwd(), ".git") then
-                    return
-                end
-
-                local cwd = vim.fn.expand("%:p:h")
-                local currentTime = os.time()
-                if
-                    gitStatusCache[cwd]
-                    and currentTime - gitStatusCache[cwd].time < cacheTimeout
-                then
-                    updateMiniWithGit(buf_id, gitStatusCache[cwd].statusMap)
-                else
-                    fetchGitStatus(cwd, function(content)
-                        local gitStatusMap = parseGitStatus(content)
-                        gitStatusCache[cwd] = {
-                            time = currentTime,
-                            statusMap = gitStatusMap,
-                        }
-                        updateMiniWithGit(buf_id, gitStatusMap)
-                    end)
-                end
-            end
-
-            ---@return nil
-            local function clearCache()
-                gitStatusCache = {}
-            end
-
-            local function augroup(name)
-                return vim.api.nvim_create_augroup(
-                    "MiniFiles_" .. name,
-                    { clear = true }
-                )
-            end
-
-            autocmd("User", {
-                group = augroup("start"),
-                pattern = "MiniFilesExplorerOpen",
-                -- pattern = { "minifiles" },
-                callback = function()
-                    local bufnr = vim.api.nvim_get_current_buf()
-                    updateGitStatus(bufnr)
-                end,
-            })
-
-            autocmd("User", {
-                group = augroup("close"),
-                pattern = "MiniFilesExplorerClose",
-                callback = function()
-                    clearCache()
-                end,
-            })
-
-            autocmd("User", {
-                group = augroup("update"),
-                pattern = "MiniFilesBufferUpdate",
-                callback = function(sii)
-                    local bufnr = sii.data.buf_id
-                    local cwd = vim.fn.expand("%:p:h")
-                    if gitStatusCache[cwd] then
-                        updateMiniWithGit(bufnr, gitStatusCache[cwd].statusMap)
-                    end
-                end,
-            })
-
-            return opts
-        end,
-
-
-        -- keys = {
-        --     {
-        --         -- Toggle the directory of the file currently being edited
-        --         -- If the file doesn't exist, open the current working directory
-        --         "<leader>e",
-        --         function()
-        --             local buf_name = vim.api.nvim_buf_get_name(0)
-        --             local dir_name = vim.fn.fnamemodify(buf_name, ":p:h")
-        --
-        --             if mini_files_open then
-        --                 -- If mini.files is open, close it
-        --                 require("mini.files").close()
-        --                 mini_files_open = false
-        --             else
-        --                 -- If mini.files is not open, open the appropriate directory
-        --                 if vim.fn.filereadable(buf_name) == 1 then
-        --                     -- Pass the full file path to highlight the file
-        --                     require("mini.files").open(buf_name, true)
-        --                 elseif vim.fn.isdirectory(dir_name) == 1 then
-        --                     -- If the directory exists but the file doesn't, open the directory
-        --                     require("mini.files").open(dir_name, true)
-        --                 else
-        --                     -- If neither exists, fallback to the current working directory
-        --                     require("mini.files").open(vim.uv.cwd(), true)
-        --                 end
-        --                 mini_files_open = true
-        --             end
-        --         end,
-        --         desc = "Toggle mini.files (Directory of Current File or CWD if not exists)",
-        --     },
-        --     -- Open the current working directory
-        --     {
-        --         "<leader>E",
-        --         function()
-        --             require("mini.files").open(vim.uv.cwd(), true)
-        --         end,
-        --         desc = "Open mini.files (cwd)",
-        --     },
-        -- },
-
-
-        --config si on ne peut pas toggle avec <leader>e
-        keys = {
-            -- {
-            --     -- Open the directory of the file currently being edited
-            --     -- If the file doesn't exist because you maybe switched to a new git branch
-            --     -- open the current working directory
-            --     "<leader>e",
-            --     function()
-            --         local buf_name = vim.api.nvim_buf_get_name(0)
-            --         local dir_name = vim.fn.fnamemodify(buf_name, ":p:h")
-            --         if vim.fn.filereadable(buf_name) == 1 then
-            --             -- Pass the full file path to highlight the file
-            --             require("mini.files").open(buf_name, true)
-            --         elseif vim.fn.isdirectory(dir_name) == 1 then
-            --             -- If the directory exists but the file doesn't, open the directory
-            --             require("mini.files").open(dir_name, true)
-            --         else
-            --             -- If neither exists, fallback to the current working directory
-            --             require("mini.files").open(vim.uv.cwd(), true)
-            --         end
-            --     end,
-            --     desc = "Open mini.files (Directory of Current File or CWD if not exists)",
-            -- },
-            -- Open the current working directory
-            {
-                "<leader>E",
-                function()
-                    require("mini.files").open(vim.uv.cwd(), true)
-                end,
-                desc = "Open mini.files (cwd)",
-            },
-        },
-    },
+    -- {
+    --     "echasnovski/mini.files",
+    --
+    --     opts = function(_, opts)
+    --         -- I didn't like the default mappings, so I modified them
+    --         -- Module mappings created only inside explorer.
+    --         -- Use `''` (empty string) to not create one.
+    --         opts.mappings = vim.tbl_deep_extend("force", opts.mappings or {}, {
+    --             close = "<esc>",
+    --             -- Use this if you want to open several files
+    --             go_in = "<Right>",
+    --             -- This opens the file, but quits out of mini.files (default L)
+    --             go_in_plus = "<CR>",
+    --             -- I swapped the following 2 (default go_out: h)
+    --             -- go_out_plus: when you go out, it shows you only 1 item to the right
+    --             -- go_out: shows you all the items to the right
+    --             go_out = "H",
+    --             go_out_plus = "<Left>",
+    --             -- Default <BS>
+    --             reset = "<BS>",
+    --             -- Default @
+    --             reveal_cwd = ".",
+    --             show_help = "g?",
+    --             -- Default =
+    --             synchronize = "s",
+    --             trim_left = "<",
+    --             trim_right = ">",
+    --
+    --             -- Below I created an autocmd with the "," keymap to open the highlighted
+    --             -- directory in a tmux pane on the right
+    --         })
+    --
+    --         vim.api.nvim_create_autocmd("User", {
+    --             pattern = "MiniFilesBufferCreate",
+    --             callback = function(args)
+    --                 vim.keymap.set("n", "<Tab>", "<Right>", { buffer = args.data.buf_id, remap = true })
+    --             end,
+    --         })
+    --
+    --         -- Here I define my custom keymaps in a centralized place
+    --         opts.custom_keymaps = {
+    --             -- open_tmux_pane = "<M-t>",
+    --             copy_to_clipboard = "<space>yy",
+    --             zip_and_copy = "<space>yz",
+    --             paste_from_clipboard = "<space>p",
+    --             copy_path = "<M-c>",
+    --             -- Don't use "i" as it conflicts wit insert mode
+    --             preview_image = "<C-Right>",
+    --             -- preview_image_popup = "<M-i>",
+    --
+    --         }
+    --
+    --         opts.windows = vim.tbl_deep_extend("force", opts.windows or {}, {
+    --             preview = false,
+    --             width_focus = 30,
+    --             width_preview = 80,
+    --         })
+    --
+    --         opts.options = vim.tbl_deep_extend("force", opts.options or {}, {
+    --             -- Whether to use for editing directories
+    --             -- Disabled by default in LazyVim because neo-tree is used for that
+    --             use_as_default_explorer = true,
+    --             -- If set to false, files are moved to the trash directory
+    --             -- To get this dir run :echo stdpath('data')
+    --             -- ~/.local/share/neobean/mini.files/trash
+    --             permanent_delete = false,
+    --         })
+    --
+    --
+    --         local nsMiniFiles = vim.api.nvim_create_namespace("mini_files_git")
+    --         local autocmd = vim.api.nvim_create_autocmd
+    --         local _, MiniFiles = pcall(require, "mini.files")
+    --
+    --         -- Cache for git status
+    --         local gitStatusCache = {}
+    --         local cacheTimeout = 2000 -- Cache timeout in milliseconds
+    --
+    --         ---@type table<string, {symbol: string, hlGroup: string}>
+    --         ---@param status string
+    --         ---@return string symbol, string hlGroup
+    --         local function mapSymbols(status)
+    --             local statusMap = {
+    --                 -- stylua: ignore start
+    --                 [" M"] = { symbol = "•", hlGroup = "GitSignsChange" }, -- Modified in the working directory
+    --                 ["M "] = { symbol = "✹", hlGroup = "GitSignsChange" }, -- modified in index
+    --                 ["MM"] = { symbol = "≠", hlGroup = "GitSignsChange" }, -- modified in both working tree and index
+    --                 ["A "] = { symbol = "+", hlGroup = "GitSignsAdd" }, -- Added to the staging area, new file
+    --                 ["AA"] = { symbol = "≈", hlGroup = "GitSignsAdd" }, -- file is added in both working tree and index
+    --                 ["D "] = { symbol = "-", hlGroup = "GitSignsDelete" }, -- Deleted from the staging area
+    --                 ["AM"] = { symbol = "⊕", hlGroup = "GitSignsChange" }, -- added in working tree, modified in index
+    --                 ["AD"] = { symbol = "-•", hlGroup = "GitSignsChange" }, -- Added in the index and deleted in the working directory
+    --                 ["R "] = { symbol = "→", hlGroup = "GitSignsChange" }, -- Renamed in the index
+    --                 ["U "] = { symbol = "‖", hlGroup = "GitSignsChange" }, -- Unmerged path
+    --                 ["UU"] = { symbol = "⇄", hlGroup = "GitSignsAdd" }, -- file is unmerged
+    --                 ["UA"] = { symbol = "⊕", hlGroup = "GitSignsAdd" }, -- file is unmerged and added in working tree
+    --                 ["??"] = { symbol = "?", hlGroup = "GitSignsDelete" }, -- Untracked files
+    --                 ["!!"] = { symbol = "!", hlGroup = "GitSignsChange" }, -- Ignored files
+    --                 -- stylua: ignore end
+    --             }
+    --
+    --             local result = statusMap[status]
+    --                 or { symbol = "?", hlGroup = "NonText" }
+    --             return result.symbol, result.hlGroup
+    --         end
+    --
+    --         ---@param cwd string
+    --         ---@param callback function
+    --         ---@return nil
+    --         local function fetchGitStatus(cwd, callback)
+    --             local function on_exit(content)
+    --                 if content.code == 0 then
+    --                     callback(content.stdout)
+    --                     vim.g.content = content.stdout
+    --                 end
+    --             end
+    --
+    --             local cwd = vim.loop.cwd()
+    --             if not cwd or vim.fn.isdirectory(cwd .. "/.git") == 0 then
+    --                 print("Not a Git repository: " .. cwd)
+    --                 return
+    --             end
+    --             vim.system(
+    --                 { "git", "status", "--ignored", "--porcelain" },
+    --                 { text = true, cwd = cwd },
+    --                 on_exit
+    --             )
+    --         end
+    --
+    --         ---@param str string?
+    --         local function escapePattern(str)
+    --             return str:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+    --         end
+    --
+    --         ---@param buf_id integer
+    --         ---@param gitStatusMap table
+    --         ---@return nil
+    --         local function updateMiniWithGit(buf_id, gitStatusMap)
+    --             vim.schedule(function()
+    --                 local nlines = vim.api.nvim_buf_line_count(buf_id)
+    --                 local cwd = vim.fs.root(buf_id, ".git")
+    --                 local escapedcwd = escapePattern(cwd)
+    --                 if vim.fn.has("win32") == 1 then
+    --                     escapedcwd = escapedcwd:gsub("\\", "/")
+    --                 end
+    --
+    --                 for i = 1, nlines do
+    --                     local entry = MiniFiles.get_fs_entry(buf_id, i)
+    --                     if not entry then
+    --                         break
+    --                     end
+    --                     local relativePath = entry.path:gsub("^" .. escapedcwd .. "/", "")
+    --                     local status = gitStatusMap[relativePath]
+    --
+    --                     if status then
+    --                         local symbol, hlGroup = mapSymbols(status)
+    --                         vim.api.nvim_buf_set_extmark(buf_id, nsMiniFiles, i - 1, 0, {
+    --                             -- NOTE: if you want the signs on the right uncomment those and comment
+    --                             -- the 3 lines after
+    --                             -- virt_text = { { symbol, hlGroup } },
+    --                             -- virt_text_pos = "right_align",
+    --                             sign_text = symbol,
+    --                             sign_hl_group = hlGroup,
+    --                             priority = 2,
+    --                         })
+    --                     else
+    --                     end
+    --                 end
+    --             end)
+    --         end
+    --
+    --
+    --         -- Thanks for the idea of gettings https://github.com/refractalize/oil-git-status.nvim signs for dirs
+    --         ---@param content string
+    --         ---@return table
+    --         local function parseGitStatus(content)
+    --             local gitStatusMap = {}
+    --             -- lua match is faster than vim.split (in my experience )
+    --             for line in content:gmatch("[^\r\n]+") do
+    --                 local status, filePath = string.match(line, "^(..)%s+(.*)")
+    --                 -- Split the file path into parts
+    --                 local parts = {}
+    --                 for part in filePath:gmatch("[^/]+") do
+    --                     table.insert(parts, part)
+    --                 end
+    --                 -- Start with the root directory
+    --                 local currentKey = ""
+    --                 for i, part in ipairs(parts) do
+    --                     if i > 1 then
+    --                         -- Concatenate parts with a separator to create a unique key
+    --                         currentKey = currentKey .. "/" .. part
+    --                     else
+    --                         currentKey = part
+    --                     end
+    --                     -- If it's the last part, it's a file, so add it with its status
+    --                     if i == #parts then
+    --                         gitStatusMap[currentKey] = status
+    --                     else
+    --                         -- If it's not the last part, it's a directory. Check if it exists, if not, add it.
+    --                         if not gitStatusMap[currentKey] then
+    --                             gitStatusMap[currentKey] = status
+    --                         end
+    --                     end
+    --                 end
+    --             end
+    --             return gitStatusMap
+    --         end
+    --
+    --         ---@param buf_id integer
+    --         ---@return nil
+    --         local function updateGitStatus(buf_id)
+    --             if not vim.fs.root(vim.uv.cwd(), ".git") then
+    --                 return
+    --             end
+    --
+    --             local cwd = vim.fn.expand("%:p:h")
+    --             local currentTime = os.time()
+    --             if
+    --                 gitStatusCache[cwd]
+    --                 and currentTime - gitStatusCache[cwd].time < cacheTimeout
+    --             then
+    --                 updateMiniWithGit(buf_id, gitStatusCache[cwd].statusMap)
+    --             else
+    --                 fetchGitStatus(cwd, function(content)
+    --                     local gitStatusMap = parseGitStatus(content)
+    --                     gitStatusCache[cwd] = {
+    --                         time = currentTime,
+    --                         statusMap = gitStatusMap,
+    --                     }
+    --                     updateMiniWithGit(buf_id, gitStatusMap)
+    --                 end)
+    --             end
+    --         end
+    --
+    --         ---@return nil
+    --         local function clearCache()
+    --             gitStatusCache = {}
+    --         end
+    --
+    --         local function augroup(name)
+    --             return vim.api.nvim_create_augroup(
+    --                 "MiniFiles_" .. name,
+    --                 { clear = true }
+    --             )
+    --         end
+    --
+    --         autocmd("User", {
+    --             group = augroup("start"),
+    --             pattern = "MiniFilesExplorerOpen",
+    --             -- pattern = { "minifiles" },
+    --             callback = function()
+    --                 local bufnr = vim.api.nvim_get_current_buf()
+    --                 updateGitStatus(bufnr)
+    --             end,
+    --         })
+    --
+    --         autocmd("User", {
+    --             group = augroup("close"),
+    --             pattern = "MiniFilesExplorerClose",
+    --             callback = function()
+    --                 clearCache()
+    --             end,
+    --         })
+    --
+    --         autocmd("User", {
+    --             group = augroup("update"),
+    --             pattern = "MiniFilesBufferUpdate",
+    --             callback = function(sii)
+    --                 local bufnr = sii.data.buf_id
+    --                 local cwd = vim.fn.expand("%:p:h")
+    --                 if gitStatusCache[cwd] then
+    --                     updateMiniWithGit(bufnr, gitStatusCache[cwd].statusMap)
+    --                 end
+    --             end,
+    --         })
+    --
+    --         return opts
+    --     end,
+    --
+    --
+    --     -- keys = {
+    --     --     {
+    --     --         -- Toggle the directory of the file currently being edited
+    --     --         -- If the file doesn't exist, open the current working directory
+    --     --         "<leader>e",
+    --     --         function()
+    --     --             local buf_name = vim.api.nvim_buf_get_name(0)
+    --     --             local dir_name = vim.fn.fnamemodify(buf_name, ":p:h")
+    --     --
+    --     --             if mini_files_open then
+    --     --                 -- If mini.files is open, close it
+    --     --                 require("mini.files").close()
+    --     --                 mini_files_open = false
+    --     --             else
+    --     --                 -- If mini.files is not open, open the appropriate directory
+    --     --                 if vim.fn.filereadable(buf_name) == 1 then
+    --     --                     -- Pass the full file path to highlight the file
+    --     --                     require("mini.files").open(buf_name, true)
+    --     --                 elseif vim.fn.isdirectory(dir_name) == 1 then
+    --     --                     -- If the directory exists but the file doesn't, open the directory
+    --     --                     require("mini.files").open(dir_name, true)
+    --     --                 else
+    --     --                     -- If neither exists, fallback to the current working directory
+    --     --                     require("mini.files").open(vim.uv.cwd(), true)
+    --     --                 end
+    --     --                 mini_files_open = true
+    --     --             end
+    --     --         end,
+    --     --         desc = "Toggle mini.files (Directory of Current File or CWD if not exists)",
+    --     --     },
+    --     --     -- Open the current working directory
+    --     --     {
+    --     --         "<leader>E",
+    --     --         function()
+    --     --             require("mini.files").open(vim.uv.cwd(), true)
+    --     --         end,
+    --     --         desc = "Open mini.files (cwd)",
+    --     --     },
+    --     -- },
+    --
+    --
+    --     --config si on ne peut pas toggle avec <leader>e
+    --     keys = {
+    --         -- {
+    --         --     -- Open the directory of the file currently being edited
+    --         --     -- If the file doesn't exist because you maybe switched to a new git branch
+    --         --     -- open the current working directory
+    --         --     "<leader>e",
+    --         --     function()
+    --         --         local buf_name = vim.api.nvim_buf_get_name(0)
+    --         --         local dir_name = vim.fn.fnamemodify(buf_name, ":p:h")
+    --         --         if vim.fn.filereadable(buf_name) == 1 then
+    --         --             -- Pass the full file path to highlight the file
+    --         --             require("mini.files").open(buf_name, true)
+    --         --         elseif vim.fn.isdirectory(dir_name) == 1 then
+    --         --             -- If the directory exists but the file doesn't, open the directory
+    --         --             require("mini.files").open(dir_name, true)
+    --         --         else
+    --         --             -- If neither exists, fallback to the current working directory
+    --         --             require("mini.files").open(vim.uv.cwd(), true)
+    --         --         end
+    --         --     end,
+    --         --     desc = "Open mini.files (Directory of Current File or CWD if not exists)",
+    --         -- },
+    --         -- Open the current working directory
+    --         {
+    --             "<leader>E",
+    --             function()
+    --                 require("mini.files").open(vim.uv.cwd(), true)
+    --             end,
+    --             desc = "Open mini.files (cwd)",
+    --         },
+    --     },
+    -- },
 
     { "sindrets/diffview.nvim" },
 
@@ -1752,36 +2016,10 @@ require("lazy").setup({
         cmd = { "Z", "Zg", "Zt", "Zw" },
     },
 
-    { 'akinsho/toggleterm.nvim', version = "*", config = true },
+    -- { 'akinsho/toggleterm.nvim', version = "*", config = true },
 
     {
         'jghauser/follow-md-links.nvim'
-    },
-
-    {
-        'echasnovski/mini.surround',
-        version = false,
-        opts = {
-            surround = {
-                custom_surroundings = nil,
-                highlight_duration = 500,
-                mappings = {
-                    add = 'sa',
-                    delete = 'sd',
-                    find = 'sf',
-                    find_left = 'sF',
-                    highlight = 'sh',
-                    replace = 'sr',
-                    update_n_lines = 'sn',
-                    suffix_last = 'l',
-                    suffix_next = 'n',
-                },
-                n_lines = 20,
-                respect_selection_type = false,
-                search_method = 'cover',
-                silent = false,
-            }
-        }
     },
 
     {
@@ -2139,7 +2377,7 @@ require("lazy").setup({
             { "<leader>:",  function() Snacks.picker.command_history() end,              desc = "Command History" },
             { "<leader>fn", function() Snacks.picker.notifications({ wrap = true }) end, desc = "Notification History" },
             { "<leader>un", function() Snacks.notifier.hide() end,                       desc = "Dismiss All Notifications" },
-            { "<leader>e",  function() Snacks.explorer() end,                            desc = "File Explorer" }, -- ~~~~~~~~~~~~~~~ <leader>E correspond à mini.files (explorer flottant) ~~~~~~~~~~~~~~~~~~
+            -- { "<leader>e",  function() Snacks.explorer() end,                            desc = "File Explorer" }, -- ~~~~~~~~~~~~~~~ <leader>E correspond à mini.files (explorer flottant) ~~~~~~~~~~~~~~~~~~
 
             -- Picker (file)
             { "<leader>ff", function() Snacks.picker.files() end,                        desc = "Picker Find Files" },

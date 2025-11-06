@@ -36,8 +36,11 @@ ueberzug_offset = [0, 0, 0, 0]
 [opener]
 
 pdf = [
-{ run = 'okular "$1"', desc = "Okular (default)", orphan = true, for = "linux" },
-{ run = 'zathura "$1"', desc = "Zathura", orphan = true, for = "linux" },
+{ run = 'pdf "$1"', desc = "Okular (default)", orphan = true, for = "linux" },
+{ run = 'pdfz "$1"', desc = "Zathura", orphan = true, for = "linux" },
+]
+image = [
+{ run = 'ristretto.sh "$1"', desc = "Ristretto (default)", orphan = true, for = "linux" }
 ]
 edit = [
     # { run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
@@ -74,7 +77,7 @@ rules = [
     # Text
     { mime = "text/*", use = ["edit", "reveal"] },
     # Image
-    { mime = "image/*", use = ["open", "reveal"] },
+    { mime = "image/*", use = ["image", "reveal"] },
     # Media
     { mime = "{audio,video}/*", use = ["play", "reveal"] },
     # Archive

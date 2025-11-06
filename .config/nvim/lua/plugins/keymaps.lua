@@ -12,6 +12,7 @@ vim.keymap.set("n", "<leader><Tab>", ":Telescope buffers<cr>", { silent = true }
 -- tree
 -- vim.keymap.set("n", "<leader>e", ":NvimTreeFindFileToggle<cr>", { silent = true })
 -- --> c'est mini.files qui prend le relais: cd lazy.lua
+vim.keymap.set("n", "<leader>e", ":Neotree toggle<cr>", { silent = true })
 
 
 

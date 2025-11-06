@@ -18,7 +18,9 @@ export SUDO_EDITOR="nvim"
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8
 export LC_TIME=en_US.UTF-8
-export LESS='-R --mouse --no-init'
+export VIMPAGER_VIM=vim
+# export VIMPAGER_OPTIONS="--cmd 'set mouse=a'"
+export PAGER=vimpager
 
 
 # Pour colorer eza, tree, etc... (parfait pour la couleur violet)
