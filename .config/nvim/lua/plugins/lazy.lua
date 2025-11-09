@@ -2793,7 +2793,9 @@ require("lazy").setup({
 
 
             },
+
             opts = function(_, opts)
+
                 opts.enabled = function()
                     local filetype = vim.bo[0].filetype
                     if filetype == "TelescopePrompt" or filetype == "minifiles" or filetype == "snacks_picker_input" then
@@ -2822,7 +2824,7 @@ require("lazy").setup({
                             fallbacks = { "buffer" },
                             -- min_keyword_length = 1,
                             opts = {
-                                trailing_slash = false,
+                                trailing_slash = true,
                                 label_trailing_slash = true,
                                 get_cwd = function(context)
                                     return vim.fn.expand(("#%d:p:h"):format(context.bufnr))
@@ -2906,9 +2908,13 @@ require("lazy").setup({
                 opts.cmdline = {
                     enabled = true,
 
-                    keymap = { 
+                    keymap = {
                         -- preset = 'inherit',
                         -- ['<Esc>'] = { 'hide' }, -- marche mais je peux plus quitter la cmdline ...
+                        ["<Tab>"] = { "select_and_accept" },  -- Tab accepte la première suggestion
+                        ["<S-Tab>"] = { "select_prev", "fallback" },
+                        ['<Down>'] = { 'select_next', 'fallback' },
+                        ['<Up>'] = { 'select_prev', 'fallback' },
 
                     },
                     completion = {
@@ -2924,10 +2930,18 @@ require("lazy").setup({
                                     return true
                                 end
                                 if ctx.mode == 'cmdline' then
-                                    -- Récupérer le contenu actuel de la ligne de commande
                                     local cmdline = vim.fn.getcmdline()
-                                    -- Ouvrir le menu si "/" est présent (pour les chemins)
-                                    return string.find(cmdline, "/") ~= nil
+
+                                    -- Ne pas afficher pour les commandes simples de base
+                                    local simple_cmds = { "^q!?$", "^w!?$", "^wq!?$", "^x!?$", "^qa!?$", "^wqa!?$" }
+                                    for _, pattern in ipairs(simple_cmds) do
+                                        if cmdline:match(pattern) then
+                                            return false
+                                        end
+                                    end
+
+                                    -- Afficher dès qu'on commence à taper
+                                    return #cmdline > 0
                                 end
                                 return false
                             end 
@@ -2935,7 +2949,7 @@ require("lazy").setup({
                         list = {
                             selection = {
                                 preselect = true,
-                                auto_insert = true,
+                                auto_insert = false,  -- Attendre Tab pour accepter
                             },
                         },
                         ghost_text = { enabled = false },
@@ -3090,6 +3104,7 @@ require("lazy").setup({
                     ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
                     ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
                 }
+
 
                 return opts
             end,

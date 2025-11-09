@@ -170,9 +170,3 @@ if exists('$TMUX')
     endif
     ]])
 
-
--- vim.filetype.add({
---     extension = {
---         psql = "sql",
---     },
--- })
