@@ -15,6 +15,8 @@ vim.keymap.set("n", "<leader><Tab>", ":Telescope buffers<cr>", { silent = true }
 vim.keymap.set("n", "<leader>e", ":Neotree toggle<cr>", { silent = true })
 
 
+-- vim-dadbod-ui
+vim.keymap.set("n", "<leader>db", ":DBUIToggle<cr>", { silent = true })
 
 
 
@@ -194,4 +196,5 @@ require("nvim-tree").setup {
         },
     },
 }
+
 

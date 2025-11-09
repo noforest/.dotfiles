@@ -2,8 +2,8 @@
 vim.g.mapleader = " "
 
 -- buffers
-vim.keymap.set("n", "<leader>n", ":bn<cr>", { silent = true })
-vim.keymap.set("n", "<leader>b", ":bp<cr>", { silent = true })
+-- vim.keymap.set("n", "<leader>n", ":bn<cr>", { silent = true })
+-- vim.keymap.set("n", "<leader>b", ":bp<cr>", { silent = true })
 
 
 -- Si j'ai bufferline d'activer!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -27,18 +27,100 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-w>", { silent = true })
 -- vim.keymap.set("n", "<leader>j", "<C-w><C-w>", { silent = true })
 
 
---buffer 2 n'existe pas apparement donc décalage obligatoire
-vim.keymap.set("n", "<leader>&", ":buffer 1<CR>", { silent = true })
-vim.keymap.set("n", "<leader>é", ":buffer 3<CR>", { silent = true })
-vim.keymap.set("n", "<leader>\"", ":buffer 4<CR>", { silent = true })
-vim.keymap.set("n", "<leader>'", ":buffer 5<CR>", { silent = true })
-vim.keymap.set("n", "<leader>(", ":buffer 6<CR>", { silent = true })
-vim.keymap.set("n", "<leader>-", ":buffer 7<CR>", { silent = true })
-vim.keymap.set("n", "<leader>è", ":buffer 8<CR>", { silent = true })
-vim.keymap.set("n", "<leader>_", ":buffer 9<CR>", { silent = true })
-vim.keymap.set("n", "<leader>ç", ":buffer 10<CR>", { silent = true })
 
-vim.keymap.set("n", "<leader>N", ":tabn<cr>", { silent = true })
+
+-- vim.keymap.set("n", "<leader>b", function()
+--     local original_win = vim.api.nvim_get_current_win()
+--
+--     -- Essayer de se déplacer vers n'importe quel autre split
+--     local found_other_win = false
+--
+--     -- Essayer en bas
+--     vim.cmd("wincmd j")
+--     if vim.api.nvim_get_current_win() ~= original_win then
+--         found_other_win = true
+--     else
+--         -- Essayer à droite
+--         vim.cmd("wincmd l")
+--         if vim.api.nvim_get_current_win() ~= original_win then
+--             found_other_win = true
+--         else
+--             -- Essayer en haut
+--             vim.cmd("wincmd k")
+--             if vim.api.nvim_get_current_win() ~= original_win then
+--                 found_other_win = true
+--             else
+--                 -- Essayer à gauche
+--                 vim.cmd("wincmd h")
+--                 if vim.api.nvim_get_current_win() ~= original_win then
+--                     found_other_win = true
+--                 end
+--             end
+--         end
+--     end
+--
+--     if not found_other_win then
+--         print("Aucun autre split trouvé")
+--         vim.api.nvim_set_current_win(original_win)
+--         return
+--     end
+--
+--     local target_win = vim.api.nvim_get_current_win()
+--     local target_buf = vim.api.nvim_win_get_buf(target_win)
+--
+--     -- Récupérer le contenu du split cible
+--     local content = vim.api.nvim_buf_get_lines(target_buf, 0, -1, false)
+--     local original_filetype = vim.bo.filetype
+--     local original_bufname = vim.fn.bufname(target_buf)
+--
+--     -- Générer le nom de fichier
+--     local timestamp = os.date('%H%M%S')
+--     local basename = original_bufname ~= '' and 
+--     vim.fn.fnamemodify(original_bufname, ':t:r') .. "_" .. timestamp or 
+--     "buffer_" .. timestamp
+--
+--     local extension = original_filetype ~= '' and original_filetype or "txt"
+--     local filename = "/tmp/" .. basename .. "." .. extension
+--
+--     -- Sauvegarder dans /tmp
+--     local file = io.open(filename, "w")
+--     if file then
+--         file:write(table.concat(content, "\n"))
+--         file:close()
+--     else
+--         print("Erreur: Impossible d'écrire dans " .. filename)
+--         vim.api.nvim_set_current_win(original_win)
+--         return
+--     end
+--
+--     -- Fermer le split cible
+--     vim.cmd("close")
+--
+--     -- Retourner à la fenêtre originale et ouvrir le nouveau fichier
+--     vim.api.nvim_set_current_win(original_win)
+--     vim.cmd("edit " .. filename)
+--     vim.bo.buflisted = true
+--     vim.bo.swapfile = false
+--
+--     if original_filetype ~= '' then
+--         vim.bo.filetype = original_filetype
+--     end
+--
+--     -- print('Split converti en buffer: ' .. filename)
+-- end, { silent = true })
+
+-- vim.keymap.set("n", "<leader>b", function()
+--     local original_win = vim.api.nvim_get_current_win()
+--     vim.cmd("wincmd j")
+--     local filename = "/tmp/buffer_" .. os.date('%H%M%S') .. ".txt"
+--     vim.cmd("w " .. filename .. " | close | e " .. filename)
+--     vim.bo.buflisted = true
+-- end, { silent = true })
+
+
+
+
+-- vim.keymap.set("n", "<leader>n", ":tabn<cr>", { silent = true })
 
 -- a pour avantage de pas briser le layout (si je suis en split windows) donc c'est bien different de :bd
 vim.keymap.set("n", "<leader>c", ":Bdelete<cr>", { silent = true })

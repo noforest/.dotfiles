@@ -747,7 +747,7 @@ require("lazy").setup({
 
             vim.defer_fn(function()
                 local homeCd = createCdFunction(vim.fn.expand('$HOME'), false)
-                vim.keymap.set("n", "<Leader>fd", homeCd, { desc = "Cd into home", noremap = true, silent = true })
+                -- vim.keymap.set("n", "<Leader>fd", homeCd, { desc = "Cd into home", noremap = true, silent = true })
                 vim.keymap.set("n", "<C-f>", homeCd, { desc = "Cd into home", noremap = true, silent = true })
             end, 0)
         end,
@@ -2171,9 +2171,9 @@ require("lazy").setup({
                 notifications = {
                     wrap = true, -- Assure-toi que le wrapping est activé pour les notifications
                 },
-                debug = {
-                    scores = true, -- show scores in the list
-                },
+                -- debug = {
+                --     scores = true, -- show scores in the list
+                -- },
 
                 sources = {
 
@@ -2508,24 +2508,24 @@ require("lazy").setup({
 
             -- Terminal
             -- { "<c-ù>",      function() Snacks.terminal() end, desc = "Toggle Terminal" },
-            {
-                "<leader>N",
-                desc = "Neovim News",
-                function()
-                    Snacks.win({
-                        file = vim.api.nvim_get_runtime_file("doc/news.txt", false)[1],
-                        width = 0.6,
-                        height = 0.6,
-                        wo = {
-                            spell = false,
-                            wrap = false,
-                            -- signcolumn = "yes",
-                            statuscolumn = " ",
-                            conceallevel = 3,
-                        },
-                    })
-                end,
-            }
+            -- {
+            --     "<leader>N",
+            --     desc = "Neovim News",
+            --     function()
+            --         Snacks.win({
+            --             file = vim.api.nvim_get_runtime_file("doc/news.txt", false)[1],
+            --             width = 0.6,
+            --             height = 0.6,
+            --             wo = {
+            --                 spell = false,
+            --                 wrap = false,
+            --                 -- signcolumn = "yes",
+            --                 statuscolumn = " ",
+            --                 conceallevel = 3,
+            --             },
+            --         })
+            --     end,
+            -- }
         },
         init = function()
             Snacks = require("snacks")
@@ -2563,11 +2563,63 @@ require("lazy").setup({
 
     { "tpope/vim-fugitive" },
 
+    -- {
+    --     'kristijanhusak/vim-dadbod-ui',
+    --     dependencies = {
+    --         { 'tpope/vim-dadbod', lazy = false },
+    --         -- { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
+    --     },
+    --     cmd = {
+    --         'DBUI',
+    --         'DBUIToggle',
+    --         'DBUIAddConnection',
+    --         'DBUIFindBuffer',
+    --     },
+    --     init = function()
+    --         -- Your DBUI configuration
+    --         vim.g.db_ui_use_nerd_fonts = 1
+    --
+    --         vim.g.db = 'postgresql://noah@localhost/db_test'
+    --
+    --             -- Mapping personnalisé pour exécuter dans le buffer courant
+    --         vim.api.nvim_create_autocmd('FileType', {
+    --             pattern = { 'sql', 'mysql', 'plsql' },
+    --             callback = function()
+    --                 vim.keymap.set('n', '<Leader>S', '<Plug>(DBUI_ExecuteQuery)', { buffer = true })
+    --                 vim.keymap.set('v', '<Leader>S', '<Plug>(DBUI_ExecuteQuery)', { buffer = true })
+    --             end,
+    --         })
+    --
+    --         -- vim.g.dbs = {
+    --         --     dev = 'postgresql://username:password@localhost:5432/dbname',
+    --         --     -- Ajoutez d'autres connexions si nécessaire
+    --         -- }
+    --
+    --         -- -- Charger les connexions depuis un fichier séparé
+    --         -- local db_config = vim.fn.stdpath('config') .. '/db_connections.lua'
+    --         -- if vim.fn.filereadable(db_config) == 1 then
+    --         --     dofile(db_config)
+    --         -- end
+    --         -- vim.g.db_ui_save_location = vim.fn.stdpath('config') .. '/db_ui'
+    --
+    --         --[[
+    --         Créez ~/.config/nvim/db_connections.lua :
+    --         -- Ce fichier ne doit PAS être versionné (ajoutez-le au .gitignore)
+    --         vim.g.db = 'postgresql://noah@localhost/db_test'
+    --
+    --         vim.g.dbs = {
+    --             dev = 'postgresql://noah:password@localhost/db_test',
+    --             prod = 'postgresql://noah:password@prod.example.com/production',
+    --         }
+    --
+    --         ]]
+    --
+    --     end,
+    -- },
     {
         'kristijanhusak/vim-dadbod-ui',
         dependencies = {
             { 'tpope/vim-dadbod', lazy = false },
-            -- { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
         },
         cmd = {
             'DBUI',
@@ -2576,35 +2628,100 @@ require("lazy").setup({
             'DBUIFindBuffer',
         },
         init = function()
-            -- Your DBUI configuration
             vim.g.db_ui_use_nerd_fonts = 1
-
             vim.g.db = 'postgresql://noah@localhost/db_test'
-            -- vim.g.dbs = {
-            --     dev = 'postgresql://username:password@localhost:5432/dbname',
-            --     -- Ajoutez d'autres connexions si nécessaire
-            -- }
+            vim.g.db_ui_win_position = 'left'
+            vim.g.db_ui_winwidth = 30
+            -- vim.g.db_ui_show_notifications = 0
+        end,
+        config = function()
+            local function close_dbout_window()
+                local wins = vim.api.nvim_list_wins()
+                for _, win in ipairs(wins) do
+                    local buf = vim.api.nvim_win_get_buf(win)
+                    local filetype = vim.bo[buf].filetype
+                    if filetype == 'dbout' then
+                        vim.api.nvim_win_close(win, false)
+                        return true
+                    end
+                end
+                return false
+            end
 
-            -- -- Charger les connexions depuis un fichier séparé
-            -- local db_config = vim.fn.stdpath('config') .. '/db_connections.lua'
-            -- if vim.fn.filereadable(db_config) == 1 then
-            --     dofile(db_config)
-            -- end
-            -- vim.g.db_ui_save_location = vim.fn.stdpath('config') .. '/db_ui'
 
-            --[[
-            Créez ~/.config/nvim/db_connections.lua :
-            -- Ce fichier ne doit PAS être versionné (ajoutez-le au .gitignore)
-            vim.g.db = 'postgresql://noah@localhost/db_test'
+            local function save_dbout_to_buffer()
+                -- Chercher la fenêtre dbout
+                local dbout_win = nil
+                local wins = vim.api.nvim_list_wins()
 
-            vim.g.dbs = {
-                dev = 'postgresql://noah:password@localhost/db_test',
-                prod = 'postgresql://noah:password@prod.example.com/production',
-            }
+                for _, win in ipairs(wins) do
+                    local buf = vim.api.nvim_win_get_buf(win)
+                    local filetype = vim.bo[buf].filetype
+                    if filetype == 'dbout' then
+                        dbout_win = win
+                        break
+                    end
+                end
 
-            ]]
+                if not dbout_win then
+                    vim.notify('No dbout window found', vim.log.levels.INFO)
+                    return
+                end
+
+                -- Sauvegarder la fenêtre actuelle
+                local original_win = vim.api.nvim_get_current_win()
+
+                -- Aller à la fenêtre dbout
+                vim.api.nvim_set_current_win(dbout_win)
+
+                -- Créer le fichier temporaire
+                local filename = "/tmp/dbout_" .. os.date('%H%M%S') .. ".txt"
+                vim.cmd("w " .. filename)
+
+                -- Fermer la fenêtre dbout
+                vim.api.nvim_win_close(dbout_win, false)
+
+                -- Revenir à la fenêtre originale et ouvrir le fichier
+                vim.api.nvim_set_current_win(original_win)
+                vim.cmd("edit " .. filename)
+                vim.bo.buflisted = true
+
+                -- vim.notify('DBout saved to: ' .. filename, vim.log.levels.INFO)
+                vim.cmd("only")
+            end
+
+            -- Remplacer le mapping <leader>S original
+            vim.keymap.set('n', '<leader>L', function()
+                -- Exécuter la requête SQL (commande originale de dbui)
+                vim.cmd('DB')
+
+                -- Attendre un peu que le résultat soit affiché puis sauvegarder
+                vim.defer_fn(function()
+                    save_dbout_to_buffer()
+                end, 2000)
+            end, { desc = 'Execute query and save to buffer' })
+
+
+
+            vim.keymap.set('n', '<leader>R', function()
+                if not close_dbout_window() then
+                    vim.notify('No dbout window found', vim.log.levels.INFO)
+                end
+            end, { desc = 'Close dbout result window' })
+
+            vim.keymap.set('n', '<leader>dc', function()
+                if not close_dbout_window() then
+                    vim.notify('No dbout window found', vim.log.levels.INFO)
+                end
+            end, { desc = 'Close dbout result window' })
+
+            vim.keymap.set('n', '<leader>b', save_dbout_to_buffer, { desc = 'Save dbout to buffer' })
 
         end,
+        keys = {
+            { '<leader>db', '<cmd>DBUIToggle<cr>', desc = 'Toggle DBUI' },
+            { '<leader>df', '<cmd>DBUIFindBuffer<cr>', desc = 'DBUI Find Buffer' },
+        },
     },
 
 
