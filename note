@@ -235,3 +235,40 @@ pour cancel toutes les erreurs de xkbcomp après avoir quitté dwm, il faut modi
 alors commenter la ligne: 
 //   key <I570>   {       [ XF86RefreshRateToggle          ]      }; // KEY_REFRESH_RATE_TOGGLE
 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pour le plugin: vim-dadbod
+
+
+:DBUI 
+puis
+postgresql://noah@localhost/db_test
+
+
+c'est l'équivalent de mon:
+psql -U noah -d db_test 
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pour installer le lsp SQLS (lsp pour SQL et POSTGRESQL)
+
+il faut égalément en amont télécharger: sqls via yay, donc:
+
+yay -S sqls
+
+puis mettre dans ~./.config/sqls/config.yml:
+
+connections:
+- alias: db_test
+driver: postgresql
+proto: tcp
+host: localhost
+port: 5432
+user: noah
+dbName: db_test
+params:
+sslmode: disable
+
+
+--> en gros ce sont les infos de ta bdd (celle-ci n'a pas de mdp par exemple)

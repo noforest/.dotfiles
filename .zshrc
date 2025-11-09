@@ -21,6 +21,7 @@ export LC_TIME=en_US.UTF-8
 export VIMPAGER_VIM=vim
 # export VIMPAGER_OPTIONS="--cmd 'set mouse=a'"
 export PAGER=vimpager
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
 
 
 # Pour colorer eza, tree, etc... (parfait pour la couleur violet)

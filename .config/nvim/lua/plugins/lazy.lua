@@ -1055,6 +1055,50 @@ require("lazy").setup({
             },
         },
     },
+    -- {
+    --     "3rd/image.nvim",
+    --     build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+    --     config = function ()
+    --         require("image").setup({
+    --             backend = "kitty", -- or "ueberzug" or "sixel"
+    --             integrations = {
+    --                 markdown = {
+    --                     enabled = true,
+    --                     clear_in_insert_mode = false,
+    --                     download_remote_images = true,
+    --                     only_render_image_at_cursor = false,
+    --                     only_render_image_at_cursor_mode = "popup", -- or "inline"
+    --                     floating_windows = false, -- if true, images will be rendered in floating markdown windows
+    --                     filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+    --                 },
+    --                 neorg = {
+    --                     enabled = true,
+    --                     filetypes = { "norg" },
+    --                 },
+    --                 typst = {
+    --                     enabled = true,
+    --                     filetypes = { "typst" },
+    --                 },
+    --                 html = {
+    --                     enabled = false,
+    --                 },
+    --                 css = {
+    --                     enabled = false,
+    --                 },
+    --             },
+    --             max_width = 100,
+    --             max_height = 12,
+    --             max_width_window_percentage = math.huge,
+    --             max_height_window_percentage = math.huge,
+    --             scale_factor = 1.0,
+    --             window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
+    --             window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif", "scrollview", "scrollview_sign" },
+    --             editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
+    --             tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
+    --             hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
+    --         })
+    --     end
+    -- },
 
 
     -- {
@@ -2023,6 +2067,69 @@ require("lazy").setup({
     },
 
     {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = {
+            signs = true,
+            sign_priority = 8,
+            keywords = {
+                FIX = { icon = " ", color = "error", alt = { "FIXME", "BUG", "FIXIT", "ISSUE" } },
+                TODO = { icon = " ", color = "info" },
+                HACK = { icon = " ", color = "warning" },
+                WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+                PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+                NOTE = { icon = "", color = "hint", alt = { "INFO" } },
+                TEST = { icon = "󰙨", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
+                SEP = { icon = "─", color = "info"},
+                INSERT = { icon = "", color = "info"},
+            },
+            merge_keywords = false,
+            gui_style = { fg = "NONE", bg = "BOLD" },
+            highlight = {
+                multiline = true,
+                multiline_pattern = "^.",
+                multiline_context = 10,
+                before = "",
+                keyword = "wide",
+                after = "fg",
+                pattern = [[.*<(KEYWORDS)\s*:]],
+                comments_only = true, -- met true si tes TODO/FIX sont dans des commentaires
+                max_line_len = 400,
+                exclude = {},
+            },
+            colors = {
+                -- error = { "DiagnosticError", "ErrorMsg", "#DC2626" },
+                -- warning = { "DiagnosticWarn", "WarningMsg", "#e0af68" },
+                info = { "DiagnosticInfo" },
+                -- hint = { "DiagnosticHint", "#10b981" },
+                -- default = { "Identifier", "#bb9af7" },
+                -- test = { "Identifier", "#FF00FF" },
+
+                error = "#ff4d4d",
+                -- warning = "#fff176",
+                warning = "#fff59d",  -- jaune clair légèrement néon
+                -- info = "#6eeed9",
+                -- info = "#64f2d8",
+                -- info = "#5ef0d0" ,
+                -- info = "#76ffe1",
+                -- info = "#4df2d1" ,
+
+                hint = "#10b981",
+                default = "#bb9af7",
+                test = "#ff8c42",
+                -- test = "#f5b7ff"  -- rose pastel lumineux
+                -- test = "#f28ce2"  -- rose-violet doux
+
+            },
+            search = {
+                command = "rg",
+                args = { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column" },
+                pattern = [[\b(KEYWORDS):]],
+            },
+        }
+    },
+
+    {
         "folke/snacks.nvim",
         priority = 1000,
         -- priority = 1000,
@@ -2064,9 +2171,9 @@ require("lazy").setup({
                 notifications = {
                     wrap = true, -- Assure-toi que le wrapping est activé pour les notifications
                 },
-                -- debug = {
-                --     scores = true, -- show scores in the list
-                -- },
+                debug = {
+                    scores = true, -- show scores in the list
+                },
 
                 sources = {
 
@@ -2456,23 +2563,49 @@ require("lazy").setup({
 
     { "tpope/vim-fugitive" },
 
-    -- {
-    --     "gelguy/wilder.nvim",
-    --     config = function()
-    --         local wilder = require('wilder')
-    --
-    --         -- Setup for command-line modes : :, /, ?
-    --         wilder.setup({ modes = { ":", "/", "?" } })
-    --
-    --         -- Optional: choose a renderer (dropdown, popupmenu, etc.)
-    --         wilder.set_option('renderer', wilder.popupmenu_renderer({
-    --
-    --             highlighter = wilder.basic_highlighter(),
-    --             left = { ' ', wilder.popupmenu_devicons() },
-    --             right = { ' ', wilder.popupmenu_scrollbar() },
-    --         }))
-    --     end
-    -- },
+    {
+        'kristijanhusak/vim-dadbod-ui',
+        dependencies = {
+            { 'tpope/vim-dadbod', lazy = false },
+            -- { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
+        },
+        cmd = {
+            'DBUI',
+            'DBUIToggle',
+            'DBUIAddConnection',
+            'DBUIFindBuffer',
+        },
+        init = function()
+            -- Your DBUI configuration
+            vim.g.db_ui_use_nerd_fonts = 1
+
+            vim.g.db = 'postgresql://noah@localhost/db_test'
+            -- vim.g.dbs = {
+            --     dev = 'postgresql://username:password@localhost:5432/dbname',
+            --     -- Ajoutez d'autres connexions si nécessaire
+            -- }
+
+            -- -- Charger les connexions depuis un fichier séparé
+            -- local db_config = vim.fn.stdpath('config') .. '/db_connections.lua'
+            -- if vim.fn.filereadable(db_config) == 1 then
+            --     dofile(db_config)
+            -- end
+            -- vim.g.db_ui_save_location = vim.fn.stdpath('config') .. '/db_ui'
+
+            --[[
+            Créez ~/.config/nvim/db_connections.lua :
+            -- Ce fichier ne doit PAS être versionné (ajoutez-le au .gitignore)
+            vim.g.db = 'postgresql://noah@localhost/db_test'
+
+            vim.g.dbs = {
+                dev = 'postgresql://noah:password@localhost/db_test',
+                prod = 'postgresql://noah:password@prod.example.com/production',
+            }
+
+            ]]
+
+        end,
+    },
 
 
 
@@ -2629,6 +2762,7 @@ require("lazy").setup({
 
 
 
+
     {
             "saghen/blink.cmp",
             -- build = 'cargo build --release',
@@ -2637,6 +2771,7 @@ require("lazy").setup({
                 "moyiz/blink-emoji.nvim",
 
                 "hrsh7th/nvim-cmp",
+                -- { "kristijanhusak/vim-dadbod-completion", ft = { 'sql', 'mysql', 'plsql' } },
 
                 {
                     "windwp/nvim-autopairs",
@@ -2669,6 +2804,9 @@ require("lazy").setup({
 
                 opts.sources = vim.tbl_deep_extend("force", opts.sources or {}, {
                     default = { "lsp", "path", "snippets", "buffer", "cmdline" },
+                    -- per_filetype = {
+                    --     sql = { 'dadbod', 'buffer', 'path' }, -- dadbod en premier pour la priorité
+                    -- },
                     providers = {
                         lsp = {
                             name = "lsp",
@@ -2698,16 +2836,25 @@ require("lazy").setup({
                             enabled = true,
                             max_items = 4,
                             module = "blink.cmp.sources.buffer",
-                            score_offset = 16, -- the higher the number, the higher the priority
+                            -- score_offset = 16, -- the higher the number, the higher the priority
+                            score_offset = 20,
                             -- min_keyword_length = 1,
                         },
 
+                        -- dadbod = {
+                        --     name = "Dadbod",
+                        --     module = "vim_dadbod_completion.blink",
+                        --     score_offset = 50, -- the higher the number, the higher the priority
+                        --     max_items = 10,
+                        -- },
+
                         snippets = {
                             name = "snippets",
-                            score_offset = 15, -- the higher the number, the higher the priority
+                            score_offset = 25, -- the higher the number, the higher the priority
                             max_items = 4,
                             enabled = function()
-                                return vim.bo.filetype == "tex" -- UTILISER pour fichers .tex
+                                local ft = vim.bo.filetype
+                                return ft == "tex" -- or ft == "sql"
                             end,
                         },
 
@@ -2924,7 +3071,17 @@ require("lazy").setup({
 
                 opts.keymap = {
                     preset = "none",
-                    ["<Tab>"] = { "select_and_accept", "fallback" },
+                    ["<Tab>"] = { 
+                        function(cmp)
+                            if cmp.snippet_active() then
+                                return cmp.snippet_forward()
+                            else
+                                return cmp.select_and_accept()
+                            end
+                        end,
+                        "fallback" 
+                    },
+                    ["<S-Tab>"] = { "snippet_backward", "fallback" },
                     ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
                     ['<Up>'] = { 'select_prev', 'fallback' },
                     ['<Down>'] = { 'select_next', 'fallback' },
@@ -2994,7 +3151,41 @@ require("lazy").setup({
                             }
                         }
                     },
+
+                    sqls = {
+
+                    }
+                    -- sqls = {
+                    --     on_attach = function(client, bufnr)
+                    --         -- Appel de votre on_attach commun
+                    --         on_attach(client, bufnr)
+                    --
+                    --         -- Commande de connexion sqls
+                    --         vim.api.nvim_create_autocmd("BufEnter", {
+                    --             pattern = "*.sql",
+                    --             callback = function()
+                    --                 vim.lsp.buf.execute_command({
+                    --                     command = 'switchConnections',
+                    --                     arguments = { 'db_test' }
+                    --                 })
+                    --             end,
+                    --             once = true,
+                    --         })
+                    --     end,
+                    --     settings = {
+                    --         sqls = {
+                    --             connections = {
+                    --                 {
+                    --                     driver = 'postgresql',
+                    --                     dataSourceName = 'host=127.0.0.1 port=5432 user=noah password=ton_mot_de_passe dbname=db_test sslmode=disable',
+                    --                 },
+                    --             },
+                    --         },
+                    --     },
+                    -- }
+
                 },
+
             },
 
             config = function(_, opts)
