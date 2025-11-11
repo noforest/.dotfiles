@@ -2629,9 +2629,13 @@ require("lazy").setup({
         },
         init = function()
             vim.g.db_ui_use_nerd_fonts = 1
-            vim.g.db = 'postgresql://noah@localhost/db_test'
+            -- vim.g.db = 'postgresql://noah@localhost/db_test'
             vim.g.db_ui_win_position = 'left'
             vim.g.db_ui_winwidth = 30
+            vim.g.dbs = {
+                { name = 'projet_local', url = 'postgresql://noah@localhost/db_test' },
+                { name = 'tp_select_local', url = 'postgresql://noah@localhost/db_tp_select' },
+            }
             -- vim.g.db_ui_show_notifications = 0
         end,
         config = function()
@@ -3230,8 +3234,7 @@ require("lazy").setup({
 
 
 
-
-
+        {"nanotee/sqls.nvim"},
 
         -- REFONTE DE MA CONFIG LSP
 
@@ -3284,37 +3287,44 @@ require("lazy").setup({
                         }
                     },
 
-                    sqls = {
-
-                    }
                     -- sqls = {
-                    --     on_attach = function(client, bufnr)
-                    --         -- Appel de votre on_attach commun
-                    --         on_attach(client, bufnr)
                     --
-                    --         -- Commande de connexion sqls
-                    --         vim.api.nvim_create_autocmd("BufEnter", {
-                    --             pattern = "*.sql",
-                    --             callback = function()
-                    --                 vim.lsp.buf.execute_command({
-                    --                     command = 'switchConnections',
-                    --                     arguments = { 'db_test' }
-                    --                 })
-                    --             end,
-                    --             once = true,
-                    --         })
-                    --     end,
-                    --     settings = {
-                    --         sqls = {
-                    --             connections = {
-                    --                 {
-                    --                     driver = 'postgresql',
-                    --                     dataSourceName = 'host=127.0.0.1 port=5432 user=noah password=ton_mot_de_passe dbname=db_test sslmode=disable',
-                    --                 },
-                    --             },
-                    --         },
-                    --     },
                     -- }
+
+                    sqls = (function()
+
+                        -- ============================================================================================================================
+                        -- TOUJOURS mettre un fichier config.yml au root du projet (cf template ~/.config/sqls/config.yml), ex sans mdp:
+                        --[[ 
+                        connections:
+                          - alias: db_test
+                            driver: postgresql
+                            proto: tcp
+                            host: localhost
+                            port: 5432
+                            user: noah
+                            dbName: db_test
+                            params:
+                              sslmode: disable
+                        ]]
+
+                        -- ============================================================================================================================
+
+                        local config_path = "config.yml"
+
+                        -- Vérifie que le fichier existe
+                        if vim.fn.filereadable(config_path) == 0 then
+                            vim.notify("Fichier SQLs config non trouvé : " .. config_path .. ", le LSP utilisera la config globale", vim.log.levels.WARN)
+                            config_path = nil -- laisse sqls utiliser la config par défaut
+                        end
+
+                        return {
+                            cmd = (config_path ~= nil) and { "sqls", "--config", config_path } or { "sqls" },
+                            filetypes = { "sql" },
+                            single_file_support = true,
+                            -- root_dir = project_root,
+                        }
+                    end)()
 
                 },
 
