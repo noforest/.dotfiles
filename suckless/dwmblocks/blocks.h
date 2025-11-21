@@ -11,8 +11,8 @@ static const Block blocks[] = {
     {"",		"vap-clock",		1,			1},
     {"",		"powermenu",		0,			13},
     {"",		"ac_adapter.sh",		10,			0},
-    {"",		"dualscreen_focus_on_big_one",		5,			0},
-    // {"",		"multiscreen",		5,			4},
+    {"",		"screen_dual_focus_on_big_one",		5,			0},
+    // {"",		"screen_multi",		5,			4},
     // {"",		"restart_xinitrc_after_sleep",		0,			7},
 };
 
