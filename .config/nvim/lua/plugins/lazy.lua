@@ -683,6 +683,7 @@ require("lazy").setup({
                             n = {
                                 ["<Del>"] = actions.delete_buffer,
                                 ["<BS>"] = actions.delete_buffer,
+                                ["<Tab>"] = actions.select_default,
                             },
                         },
                         previewer = false,
@@ -811,6 +812,12 @@ require("lazy").setup({
             end
 
             ]]
+            -- Ajout de la configuration pour les événements de déplacement/renommage
+            local function on_move(data)
+                Snacks.rename.on_rename_file(data.source, data.destination)
+            end
+            local events = require("neo-tree.events")
+
             require("neo-tree").setup({
                 window = {
                     position = "left",
@@ -1025,6 +1032,11 @@ require("lazy").setup({
 
                     commands = {}, -- Add a custom command or override a global one using the same function name
                   },
+
+                  event_handlers = {
+                      { event = events.FILE_MOVED, handler = on_move },
+                      { event = events.FILE_RENAMED, handler = on_move },
+                  }
 
             })
         end,
@@ -2497,7 +2509,7 @@ require("lazy").setup({
             { "<leader>fb", function() Snacks.gitbrowse() end,                           desc = "Git Browse" },
             { "<leader>fc", function() Snacks.picker.git_log_file() end,                 desc = "Git Commit File" },
             { "<leader>fC", function() Snacks.picker.git_log() end,                      desc = "Git Commit Files" },
-            { "<leader>fh", function() Snacks.picker.git_diff() end,                     desc = "Git Diff (Hunks)" },
+            -- { "<leader>fh", function() Snacks.picker.git_diff() end,                     desc = "Git Diff (Hunks)" },
             { "<leader>lg", function() Snacks.lazygit() end,                             desc = "Lazygit" },
 
             -- Picker (Diagnostics)
@@ -3283,6 +3295,7 @@ require("lazy").setup({
                         settings = {
                             java = {
                                 signatureHelp = { enabled = true };
+
                             }
                         }
                     },
@@ -3314,7 +3327,7 @@ require("lazy").setup({
 
                         -- Vérifie que le fichier existe
                         if vim.fn.filereadable(config_path) == 0 then
-                            vim.notify("Fichier SQLs config non trouvé : " .. config_path .. ", le LSP utilisera la config globale", vim.log.levels.WARN)
+                            -- vim.notify("Fichier SQLs config non trouvé : " .. config_path .. ", le LSP utilisera la config globale", vim.log.levels.WARN)
                             config_path = nil -- laisse sqls utiliser la config par défaut
                         end
 

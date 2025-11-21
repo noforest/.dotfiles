@@ -198,3 +198,11 @@ require("nvim-tree").setup {
 }
 
 
+-- Assure-toi que vim.lsp est attaché au buffer
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        local bufnr = args.buf
+        -- Raccourci leader+r pour renommer un symbole LSP
+        vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = bufnr, desc = "Rename LSP symbol" })
+    end,
+})

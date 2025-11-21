@@ -21,7 +21,7 @@ export LC_TIME=en_US.UTF-8
 export VIMPAGER_VIM=vim
 # export VIMPAGER_OPTIONS="--cmd 'set mouse=a'"
 export PAGER=vimpager
-export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+# export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
 export RAINFROG_CONFIG=~/.config/rainfrog
 
 
@@ -215,6 +215,17 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND=0
 #     }
 # fi
 
+# if [[ -n "$ALACRITTY_WINDOW_ID" ]]; then
+#     nvim() {
+#         echo -ne "\033]0;nvim: ${PWD/#$HOME/~}\007"
+#         command nvim "$@"
+#         echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
+#     }
+#
+# precmd() {
+#     echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
+# }
+# fi
 
 # Vérifie si on est bien lancé depuis Alacritty (même dans tmux)
 if [[ -n "$ALACRITTY_WINDOW_ID" ]]; then
@@ -223,6 +234,7 @@ if [[ -n "$ALACRITTY_WINDOW_ID" ]]; then
         echo -ne "\033]0;Alacritty: ${PWD/#$HOME/~}\007"
     }
 fi
+
 
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
