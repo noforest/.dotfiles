@@ -20,7 +20,8 @@ export LC_ALL=en_US.UTF-8
 export LC_TIME=en_US.UTF-8
 export VIMPAGER_VIM=vim
 # export VIMPAGER_OPTIONS="--cmd 'set mouse=a'"
-export PAGER=vimpager
+export PAGER="vimpager"
+export MANPAGER="vimpager"
 # export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
 export RAINFROG_CONFIG=~/.config/rainfrog
 
