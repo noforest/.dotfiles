@@ -52,6 +52,7 @@ alias nv='nvim'
 alias sn='shutdown now'
 alias rb='reboot'
 alias rm="rm -i"
+alias diffu='diff -u "$1" "$2" | diff-so-fancy'
 
 
 alias py="python3"

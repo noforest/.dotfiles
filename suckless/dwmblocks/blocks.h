@@ -13,7 +13,6 @@ static const Block blocks[] = {
     {"",		"ac_adapter.sh",		10,			0},
     {"",		"screen_dual_focus_on_big_one",		5,			0},
     // {"",		"screen_multi",		5,			4},
-    // {"",		"restart_xinitrc_after_sleep",		0,			7},
 };
 
 //sets delimiter between status commands. NULL character ('\0') means no delimiter.
